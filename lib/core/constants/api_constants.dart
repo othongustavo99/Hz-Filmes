@@ -1,0 +1,21 @@
+class ApiConstants {
+  
+  static const String apiKey = String.fromEnvironment('TMDB_API_KEY', defaultValue: '');
+  
+  static const String baseUrl = 'https://api.themoviedb.org/3';
+  static const String imageBaseUrl = 'https://image.tmdb.org/t/p/';
+  
+  // Tamanhos de imagem comuns
+  static const String posterSize = 'w500';
+  static const String backdropSize = 'w1280';
+  static const String profileSize = 'w185';
+
+  // Endpoints principais
+  static const String trendingMovies = '/trending/movie/week';
+  static const String popularMovies = '/movie/popular';
+  static const String topRatedMovies = '/movie/top_rated';
+  static const String upcomingMovies = '/movie/upcoming';
+  static const String nowPlaying = '/movie/now_playing';
+  static const String searchMovie = '/search/movie';
+  static const String movieDetails = '/movie'; // + /{id}
+}

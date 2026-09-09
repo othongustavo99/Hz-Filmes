@@ -13,11 +13,15 @@ class MovieDetailLoading extends MovieDetailState {}
 
 class MovieDetailLoaded extends MovieDetailState {
   final MovieModel movie;
+  final List<MovieModel> similarMovies;
 
-  const MovieDetailLoaded(this.movie);
+  const MovieDetailLoaded({
+    required this.movie,
+    this.similarMovies = const [],
+  });
 
   @override
-  List<Object?> get props => [movie];
+  List<Object?> get props => [movie, similarMovies];
 }
 
 class MovieDetailError extends MovieDetailState {

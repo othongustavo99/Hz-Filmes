@@ -1,7 +1,6 @@
-import 'package:hz_filmes/data/datasources/remote/movie_remote_datasource.dart';
-import 'package:hz_filmes/data/models/movie_model.dart';
-
 import '../../domain/repositories/movie_repository.dart';
+import '../datasources/remote/movie_remote_datasource.dart';
+import '../models/movie_model.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final MovieRemoteDataSource remoteDataSource;
@@ -41,5 +40,10 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<MovieModel> getMovieDetails(int movieId) {
     return remoteDataSource.getMovieDetails(movieId);
+  }
+
+  @override
+  Future<List<MovieModel>> getSimilarMovies(int movieId) {
+    return remoteDataSource.getSimilarMovies(movieId);
   }
 }

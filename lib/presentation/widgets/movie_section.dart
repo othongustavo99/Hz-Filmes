@@ -65,13 +65,14 @@ class MovieSection extends StatelessWidget {
                 child: MovieCard(
                   movie: movies[index],
                   onTap: () {
+                    final movieRepository = context.read<MovieRepository>();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MovieDetailPage(
                           movieId: movies[index].id,
-                          movieRepository: context
-                              .read<MovieRepository>(), // vamos ajustar
+                          movieRepository: movieRepository,
                         ),
                       ),
                     );

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../models/movie_model.dart';
@@ -11,12 +12,21 @@ abstract class MovieRemoteDataSource {
   Future<List<MovieModel>> getNowPlaying({int page = 1});
   Future<List<MovieModel>> searchMovies(String query, {int page = 1});
   Future<MovieModel> getMovieDetails(int movieId);
+  Future<List<MovieModel>> getSimilarMovies(int movieId);
 }
 
 class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   final DioClient dioClient;
 
   MovieRemoteDataSourceImpl(this.dioClient);
+
+  @override
+  Future<List<MovieModel>> getSimilarMovies(int movieId) async {
+    final response = await dioClient.dio.get(
+      '${ApiConstants.movieDetails}/$movieId/similar',
+    );
+    return _parseMovieList(response);
+  }
 
   @override
   Future<List<MovieModel>> getTrendingMovies() async {

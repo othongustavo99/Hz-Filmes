@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/presentation/blocs/favorites/favorites_bloc.dart';
 
 import 'core/network/dio_client.dart';
 import 'core/theme/app_theme.dart';
@@ -8,6 +9,7 @@ import 'data/repositories/movie_repository_impl.dart';
 import 'domain/repositories/movie_repository.dart';
 import 'presentation/blocs/home/home_bloc.dart';
 import 'presentation/pages/home_page.dart';
+import 'presentation/pages/main_page.dart';
 
 void main() {
   runApp(const HzFilmesApp());
@@ -18,22 +20,29 @@ class HzFilmesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Injeção de dependências manual (simples e clara)
     final dioClient = DioClient();
     final remoteDataSource = MovieRemoteDataSourceImpl(dioClient);
-    final MovieRepository movieRepository = MovieRepositoryImpl(remoteDataSource);
+    final MovieRepository movieRepository = MovieRepositoryImpl(
+      remoteDataSource,
+    );
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => HomeBloc(movieRepository)..add(LoadHomeData()),
+    return RepositoryProvider<MovieRepository>.value(
+      value: movieRepository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => HomeBloc(movieRepository)..add(LoadHomeData()),
+          ),
+          BlocProvider(
+            create: (context) => FavoritesBloc()..add(LoadFavorites()),
+          ),
+        ],
+        child: MaterialApp(
+          title: 'HZ Filmes',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.darkTheme,
+          home: const MainPage(),
         ),
-      ],
-      child: MaterialApp(
-        title: 'HZ Filmes',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
-        home: const HomePage(),
       ),
     );
   }

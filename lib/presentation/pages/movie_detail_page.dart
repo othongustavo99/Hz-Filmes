@@ -2,10 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-
+import '../blocs/favorites/favorites_bloc.dart';
+import '../widgets/movie_card.dart';
+import '../../domain/repositories/movie_repository.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/movie_model.dart';
-import '../../domain/repositories/movie_repository.dart';
 import '../blocs/movie_detail/movie_detail_bloc.dart';
 
 class MovieDetailPage extends StatelessWidget {
@@ -21,8 +22,8 @@ class MovieDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MovieDetailBloc(movieRepository)
-        ..add(LoadMovieDetail(movieId)),
+      create: (context) =>
+          MovieDetailBloc(movieRepository)..add(LoadMovieDetail(movieId)),
       child: const _MovieDetailView(),
     );
   }
@@ -37,9 +38,10 @@ class _MovieDetailView extends StatelessWidget {
       backgroundColor: AppTheme.backgroundDark,
       body: BlocBuilder<MovieDetailBloc, MovieDetailState>(
         builder: (context, state) {
-          if (state is MovieDetailLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primaryOrange),
+          if (state is MovieDetailLoaded) {
+            return _MovieDetailContent(
+              movie: state.movie,
+              similarMovies: state.similarMovies,
             );
           }
 
@@ -77,15 +79,19 @@ class _MovieDetailView extends StatelessWidget {
 
 class _MovieDetailContent extends StatelessWidget {
   final MovieModel movie;
+  final List<MovieModel> similarMovies;
 
-  const _MovieDetailContent({required this.movie});
+  const _MovieDetailContent({
+    required this.movie,
+    this.similarMovies = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        // AppBar com Backdrop
-       SliverAppBar(
+        // AppBar com Backdrop + Botão de Favorito
+        SliverAppBar(
           expandedHeight: 280,
           pinned: true,
           backgroundColor: AppTheme.backgroundDark,
@@ -93,6 +99,44 @@ class _MovieDetailContent extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
+          actions: [
+            BlocBuilder<FavoritesBloc, FavoritesState>(
+              builder: (context, favState) {
+                bool isFavorite = false;
+                if (favState is FavoritesLoaded) {
+                  isFavorite = favState.isFavorite(movie.id);
+                }
+
+                return IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                    color: isFavorite ? AppTheme.primaryOrange : Colors.white,
+                  ),
+                  onPressed: () {
+                    context.read<FavoritesBloc>().add(ToggleFavorite(movie));
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          isFavorite
+                              ? 'Removido da Minha Lista'
+                              : 'Adicionado à Minha Lista',
+                        ),
+                        backgroundColor: AppTheme.surfaceDark,
+                        behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 2),
+                        action: SnackBarAction(
+                          label: 'OK',
+                          textColor: AppTheme.primaryOrange,
+                          onPressed: () {},
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             background: Stack(
               fit: StackFit.expand,
@@ -100,8 +144,10 @@ class _MovieDetailContent extends StatelessWidget {
                 CachedNetworkImage(
                   imageUrl: movie.backdropUrl,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(color: AppTheme.cardDark),
-                  errorWidget: (context, url, error) => Container(color: AppTheme.cardDark),
+                  placeholder: (context, url) =>
+                      Container(color: AppTheme.cardDark),
+                  errorWidget: (context, url, error) =>
+                      Container(color: AppTheme.cardDark),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -121,7 +167,7 @@ class _MovieDetailContent extends StatelessWidget {
           ),
         ),
 
-        // Conteúdo principal
+        // Conteúdo
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -157,7 +203,11 @@ class _MovieDetailContent extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.star, color: AppTheme.primaryOrange, size: 20),
+                              const Icon(
+                                Icons.star,
+                                color: AppTheme.primaryOrange,
+                                size: 20,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 movie.voteAverage.toStringAsFixed(1),
@@ -177,9 +227,12 @@ class _MovieDetailContent extends StatelessWidget {
                           Text(
                             [
                               if (movie.year.isNotEmpty) movie.year,
-                              if (movie.runtimeFormatted.isNotEmpty) movie.runtimeFormatted,
+                              if (movie.runtimeFormatted.isNotEmpty)
+                                movie.runtimeFormatted,
                             ].join(' • '),
-                            style: const TextStyle(color: AppTheme.textSecondary),
+                            style: const TextStyle(
+                              color: AppTheme.textSecondary,
+                            ),
                           ),
                           if (movie.genres.isNotEmpty) ...[
                             const SizedBox(height: 12),
@@ -188,14 +241,20 @@ class _MovieDetailContent extends StatelessWidget {
                               runSpacing: 6,
                               children: movie.genres.take(4).map((genre) {
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppTheme.cardDark,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     genre.name,
-                                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 );
                               }).toList(),
@@ -275,15 +334,22 @@ class _MovieDetailContent extends StatelessWidget {
                                   width: 100,
                                   height: 120,
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) => Shimmer.fromColors(
-                                    baseColor: AppTheme.cardDark,
-                                    highlightColor: AppTheme.surfaceDark,
-                                    child: Container(color: AppTheme.cardDark),
-                                  ),
-                                  errorWidget: (context, url, error) => Container(
-                                    color: AppTheme.cardDark,
-                                    child: const Icon(Icons.person, color: Colors.grey),
-                                  ),
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
+                                        baseColor: AppTheme.cardDark,
+                                        highlightColor: AppTheme.surfaceDark,
+                                        child: Container(
+                                          color: AppTheme.cardDark,
+                                        ),
+                                      ),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        color: AppTheme.cardDark,
+                                        child: const Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -308,6 +374,49 @@ class _MovieDetailContent extends StatelessWidget {
                                   ),
                                 ),
                             ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+
+                // Filmes Semelhantes
+                if (similarMovies.isNotEmpty) ...[
+                  const SizedBox(height: 32),
+                  const Text(
+                    'Filmes Semelhantes',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 260,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: similarMovies.length,
+                      itemBuilder: (context, index) {
+                        final similarMovie = similarMovies[index];
+                        return Container(
+                          width: 140,
+                          margin: const EdgeInsets.only(right: 10),
+                          child: MovieCard(
+                            movie: similarMovie,
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MovieDetailPage(
+                                    movieId: similarMovie.id,
+                                    movieRepository: context
+                                        .read<MovieRepository>(),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },

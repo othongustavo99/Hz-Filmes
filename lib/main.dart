@@ -8,7 +8,6 @@ import 'data/datasources/remote/movie_remote_datasource.dart';
 import 'data/repositories/movie_repository_impl.dart';
 import 'domain/repositories/movie_repository.dart';
 import 'presentation/blocs/home/home_bloc.dart';
-import 'presentation/pages/home_page.dart';
 import 'presentation/pages/main_page.dart';
 
 void main() {

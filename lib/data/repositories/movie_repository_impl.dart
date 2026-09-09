@@ -1,6 +1,7 @@
 import '../../domain/repositories/movie_repository.dart';
 import '../datasources/remote/movie_remote_datasource.dart';
 import '../models/movie_model.dart';
+import '../models/video_model.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final MovieRemoteDataSource remoteDataSource;
@@ -45,5 +46,10 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<List<MovieModel>> getSimilarMovies(int movieId) {
     return remoteDataSource.getSimilarMovies(movieId);
+  }
+
+  @override
+  Future<List<VideoModel>> getMovieVideos(int movieId) {
+    return remoteDataSource.getMovieVideos(movieId);
   }
 }

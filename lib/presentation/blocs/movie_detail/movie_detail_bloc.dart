@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../data/models/movie_model.dart';
+import '../../../data/models/video_model.dart';
 import '../../../domain/repositories/movie_repository.dart';
 
 part 'movie_detail_event.dart';
@@ -24,17 +24,18 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
       final results = await Future.wait([
         movieRepository.getMovieDetails(event.movieId),
         movieRepository.getSimilarMovies(event.movieId),
+        movieRepository.getMovieVideos(event.movieId),
       ]);
 
       final movie = results[0] as MovieModel;
       final similar = results[1] as List<MovieModel>;
+      final trailers = results[2] as List<VideoModel>;
 
-      emit(
-        MovieDetailLoaded(
-          movie: movie,
-          similarMovies: similar,
-        ),
-      );
+      emit(MovieDetailLoaded(
+        movie: movie,
+        similarMovies: similar,
+        trailers: trailers,
+      ));
     } catch (e) {
       emit(MovieDetailError(e.toString()));
     }

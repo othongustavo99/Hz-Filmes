@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../models/video_model.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../models/movie_model.dart';
@@ -13,6 +14,7 @@ abstract class MovieRemoteDataSource {
   Future<List<MovieModel>> searchMovies(String query, {int page = 1});
   Future<MovieModel> getMovieDetails(int movieId);
   Future<List<MovieModel>> getSimilarMovies(int movieId);
+  Future<List<VideoModel>> getMovieVideos(int movieId);
 }
 
 class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
@@ -26,6 +28,20 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
       '${ApiConstants.movieDetails}/$movieId/similar',
     );
     return _parseMovieList(response);
+  }
+
+  @override
+  Future<List<VideoModel>> getMovieVideos(int movieId) async {
+    final response = await dioClient.dio.get(
+      '${ApiConstants.movieDetails}/$movieId/videos',
+    );
+
+    final results = response.data['results'] as List<dynamic>? ?? [];
+
+    return results
+        .map((json) => VideoModel.fromJson(json as Map<String, dynamic>))
+        .where((video) => video.isYoutube && video.isTrailer)
+        .toList();
   }
 
   @override

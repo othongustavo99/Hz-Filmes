@@ -14,14 +14,16 @@ class MovieDetailLoading extends MovieDetailState {}
 class MovieDetailLoaded extends MovieDetailState {
   final MovieModel movie;
   final List<MovieModel> similarMovies;
+  final List<VideoModel> trailers;
 
   const MovieDetailLoaded({
     required this.movie,
     this.similarMovies = const [],
+    this.trailers = const [],
   });
 
   @override
-  List<Object?> get props => [movie, similarMovies];
+  List<Object?> get props => [movie, similarMovies, trailers];
 }
 
 class MovieDetailError extends MovieDetailState {

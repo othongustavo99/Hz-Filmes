@@ -20,6 +20,7 @@ class SearchPage extends StatelessWidget {
   }
 }
 
+
 class _SearchView extends StatefulWidget {
   const _SearchView();
 
@@ -30,11 +31,32 @@ class _SearchView extends StatefulWidget {
 class _SearchViewState extends State<_SearchView> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<SearchBloc>().add(LoadMoreSearchResults());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -52,7 +74,6 @@ class _SearchViewState extends State<_SearchView> {
       ),
       body: Column(
         children: [
-          // Campo de busca
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
@@ -81,14 +102,10 @@ class _SearchViewState extends State<_SearchView> {
                 ),
               ),
               textInputAction: TextInputAction.search,
-              onChanged: (value) {
-                setState(() {}); // Atualiza o botão de limpar
-              },
+              onChanged: (value) => setState(() {}),
               onSubmitted: _onSearch,
             ),
           ),
-
-          // Resultados
           Expanded(
             child: BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {
@@ -128,6 +145,7 @@ class _SearchViewState extends State<_SearchView> {
 
                 if (state is SearchLoaded) {
                   return GridView.builder(
+                    controller: _scrollController,
                     padding: const EdgeInsets.all(12),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -135,8 +153,22 @@ class _SearchViewState extends State<_SearchView> {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 12,
                     ),
-                    itemCount: state.movies.length,
+                    itemCount: state.hasReachedMax
+                        ? state.movies.length
+                        : state.movies.length + 1,
                     itemBuilder: (context, index) {
+                      if (index >= state.movies.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: CircularProgressIndicator(
+                              color: AppTheme.primaryOrange,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        );
+                      }
+
                       final movie = state.movies[index];
                       return MovieCard(
                         movie: movie,

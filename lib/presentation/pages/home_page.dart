@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/movie_list/movie_list_bloc.dart';
+import 'movie_list_page.dart';
 import '../../core/theme/app_theme.dart';
 import '../blocs/home/home_bloc.dart';
 import '../widgets/movie_section.dart';
@@ -11,7 +13,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundDark,
-      
+
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           if (state is HomeLoading) {
@@ -36,7 +38,10 @@ class HomePage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     state.message,
-                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                    style: const TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontSize: 12,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
@@ -66,22 +71,77 @@ class HomePage extends StatelessWidget {
                     MovieSection(
                       title: 'Em Alta',
                       movies: state.trending,
+                      onSeeAll: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieListPage(
+                              title: 'Em Alta',
+                              type: MovieListType.trending,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     MovieSection(
                       title: 'Populares',
                       movies: state.popular,
+                      onSeeAll: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieListPage(
+                              title: 'Populares',
+                              type: MovieListType.popular,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     MovieSection(
                       title: 'Melhores Avaliados',
                       movies: state.topRated,
+                      onSeeAll: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieListPage(
+                              title: 'Melhores Avaliados',
+                              type: MovieListType.topRated,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     MovieSection(
                       title: 'Em Breve',
                       movies: state.upcoming,
+                      onSeeAll: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieListPage(
+                              title: 'Em Breve',
+                              type: MovieListType.upcoming,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     MovieSection(
                       title: 'Em Cartaz',
                       movies: state.nowPlaying,
+                      onSeeAll: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieListPage(
+                              title: 'Em Cartaz',
+                              type: MovieListType.nowPlaying,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 40),
                   ],

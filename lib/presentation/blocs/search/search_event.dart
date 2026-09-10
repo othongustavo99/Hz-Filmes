@@ -16,4 +16,6 @@ class SearchMovies extends SearchEvent {
   List<Object> get props => [query];
 }
 
+class LoadMoreSearchResults extends SearchEvent {}
+
 class ClearSearch extends SearchEvent {}

@@ -89,8 +89,7 @@ class _MovieDetailContent extends StatelessWidget {
   final MovieModel movie;
   final List<MovieModel> similarMovies;
   final List<VideoModel> trailers;
-
-  final dynamic watchProviders;
+  final WatchProvidersResult watchProviders;
 
   const _MovieDetailContent({
     required this.movie,
@@ -316,17 +315,19 @@ class _MovieDetailContent extends StatelessWidget {
                 ),
 
                 // Onde assistir
-                if (!watchProviders.isEmpty) ...[
-                  const SizedBox(height: 28),
-                  const Text(
-                    'Onde assistir',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                const SizedBox(height: 28),
+                const Text(
+                  'Onde assistir',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 12),
+                ),
+                const SizedBox(height: 12),
+
+                // Tem providers → mostra as plataformas
+                if (!watchProviders.isEmpty) ...[
                   if (watchProviders.flatrate.isNotEmpty) ...[
                     const Text(
                       'Streaming',
@@ -362,13 +363,51 @@ class _MovieDetailContent extends StatelessWidget {
                     const SizedBox(height: 8),
                     _ProvidersRow(providers: watchProviders.buy),
                   ],
+                ]
+                // Não tem providers → mostra "Apenas nos cinemas"
+                else ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.cardDark,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppTheme.primaryOrange.withOpacity(0.4),
+                        width: 1,
+                      ),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.local_movies_outlined,
+                          color: AppTheme.primaryOrange,
+                          size: 22,
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Disponível apenas nos cinemas',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
 
-                const SizedBox(height: 28),
+                
 
                 // Trailers
                 if (trailers.isNotEmpty) ...[
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 15),
                   const Text(
                     'Trailers',
                     style: TextStyle(
@@ -379,7 +418,7 @@ class _MovieDetailContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 180,
+                    height: 230,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: trailers.length,
@@ -530,7 +569,7 @@ class _ProvidersRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 72, // ← aumentei de 56 para 72 (evita overflow)
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: providers.length,
@@ -540,37 +579,48 @@ class _ProvidersRow extends StatelessWidget {
           return Tooltip(
             message: provider.name,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: provider.logoUrl.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: provider.logoUrl,
-                          width: 40,
-                          height: 40,
+                          width: 44,
+                          height: 44,
                           fit: BoxFit.cover,
+                          errorWidget: (_, __, ___) => Container(
+                            width: 44,
+                            height: 44,
+                            color: AppTheme.cardDark,
+                            child: const Icon(
+                              Icons.tv,
+                              color: Colors.white54,
+                              size: 22,
+                            ),
+                          ),
                         )
                       : Container(
-                          width: 40,
-                          height: 40,
+                          width: 44,
+                          height: 44,
                           color: AppTheme.cardDark,
                           child: const Icon(
                             Icons.tv,
                             color: Colors.white54,
-                            size: 20,
+                            size: 22,
                           ),
                         ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 SizedBox(
-                  width: 50,
+                  width: 56,
                   child: Text(
                     provider.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 10,
+                      fontSize: 11,
                       color: AppTheme.textSecondary,
                     ),
                   ),

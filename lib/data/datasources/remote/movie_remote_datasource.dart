@@ -53,9 +53,18 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
     );
 
     final results = response.data['results'] as Map<String, dynamic>? ?? {};
-    // Brasil
+
+    // Tenta Brasil primeiro, se estiver vazio tenta Estados Unidos
     final br = results['BR'] as Map<String, dynamic>?;
-    return WatchProvidersResult.fromJson(br);
+    final us = results['US'] as Map<String, dynamic>?;
+
+    final providers = WatchProvidersResult.fromJson(br);
+
+    if (providers.isEmpty && us != null) {
+      return WatchProvidersResult.fromJson(us);
+    }
+
+    return providers;
   }
 
   @override

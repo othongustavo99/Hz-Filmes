@@ -41,8 +41,7 @@ class _TrailerCardState extends State<TrailerCard> {
   }
 
   static const double _cardWidth = 260;
-  static const double _videoHeight = _cardWidth * 9 / 16;
-  static const double _controlsBarHeight = 10;
+  static const double _videoHeight = _cardWidth * 9 / 16; // ~146.25
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +50,14 @@ class _TrailerCardState extends State<TrailerCard> {
       margin: const EdgeInsets.only(right: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: SizedBox(
               width: _cardWidth,
-              // Enquanto tocando, soma o espaço da barra de controles.
-              // Parado (thumbnail), usa só a altura 16:9.
-              height: _isPlaying
-                  ? _videoHeight + _controlsBarHeight
-                  : _videoHeight,
+              // Espaço extra só quando o player está ativo (barra do YouTube)
+              height: _isPlaying ? _videoHeight + 40 : _videoHeight,
               child: _isPlaying && _controller != null
                   ? YoutubePlayer(
                       controller: _controller!,
@@ -83,18 +80,12 @@ class _TrailerCardState extends State<TrailerCard> {
                               ),
                             ),
                           ),
-                          Container(color: Colors.black38),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              color: Colors.black54,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                              size: 36,
-                            ),
+                          // SEM overlay preto em cima da imagem inteira
+                          // Só o botão de play pequeno
+                          const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 30,
                           ),
                         ],
                       ),

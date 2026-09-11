@@ -28,10 +28,14 @@
 
 <p align="center">
   <!-- Substitua pelos seus screenshots em assets/screenshots/ -->
-  <img src="assets/screenshots/home.png" alt="Home" width="180" />
-  <img src="assets/screenshots/detail.png" alt="Detalhe" width="180" />
-  <img src="assets/screenshots/search.png" alt="Busca" width="180" />
-  <img src="assets/screenshots/favorites.png" alt="Favoritos" width="180" />
+  <img src="assets/screenshots/screenshot9.png" alt="Splash" width="180" />
+  <img src="assets/screenshots/screenshot5.png" alt="Home" width="180" />
+  <img src="assets/screenshots/screenshot8.png" alt="Search" width="180" />
+  <img src="assets/screenshots/screenshot7.png" alt="Favoritos" width="180" />
+  <img src="assets/screenshots/screenshot2.png" alt="Movie Card" width="180" />
+  <img src="assets/screenshots/screenshot10.png" alt="See All" width="180" />
+  <img src="assets/screenshots/screenshot6.png" alt="Look" width="180" />
+  <img src="assets/screenshots/screenshot11.png" alt="Trailers" width="180" />
 </p>
 
 ---

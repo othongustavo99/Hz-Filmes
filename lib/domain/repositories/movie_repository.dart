@@ -1,5 +1,6 @@
 import '../../data/models/movie_model.dart';
 import '../../data/models/video_model.dart';
+import '../../data/models/watch_provider_model.dart';
 
 abstract class MovieRepository {
   Future<List<MovieModel>> getTrendingMovies();
@@ -11,4 +12,5 @@ abstract class MovieRepository {
   Future<MovieModel> getMovieDetails(int movieId);
   Future<List<MovieModel>> getSimilarMovies(int movieId);
   Future<List<VideoModel>> getMovieVideos(int movieId);
+  Future<WatchProvidersResult> getWatchProviders(int movieId);
 }

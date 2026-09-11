@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/data/models/watch_provider_model.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import '../widgets/trailer_card.dart';
 import '../../data/models/video_model.dart';
 import '../blocs/favorites/favorites_bloc.dart';
@@ -73,6 +74,7 @@ class _MovieDetailView extends StatelessWidget {
               movie: state.movie,
               similarMovies: state.similarMovies,
               trailers: state.trailers,
+              watchProviders: state.watchProviders,
             );
           }
 
@@ -88,10 +90,13 @@ class _MovieDetailContent extends StatelessWidget {
   final List<MovieModel> similarMovies;
   final List<VideoModel> trailers;
 
+  final dynamic watchProviders;
+
   const _MovieDetailContent({
     required this.movie,
     this.similarMovies = const [],
     this.trailers = const [],
+    this.watchProviders = const WatchProvidersResult(),
   });
 
   @override
@@ -310,9 +315,57 @@ class _MovieDetailContent extends StatelessWidget {
                   ),
                 ),
 
+                // Onde assistir
+                if (!watchProviders.isEmpty) ...[
+                  const SizedBox(height: 28),
+                  const Text(
+                    'Onde assistir',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (watchProviders.flatrate.isNotEmpty) ...[
+                    const Text(
+                      'Streaming',
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _ProvidersRow(providers: watchProviders.flatrate),
+                    const SizedBox(height: 16),
+                  ],
+                  if (watchProviders.rent.isNotEmpty) ...[
+                    const Text(
+                      'Alugar',
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _ProvidersRow(providers: watchProviders.rent),
+                    const SizedBox(height: 16),
+                  ],
+                  if (watchProviders.buy.isNotEmpty) ...[
+                    const Text(
+                      'Comprar',
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _ProvidersRow(providers: watchProviders.buy),
+                  ],
+                ],
+
                 const SizedBox(height: 28),
 
-                // Trailers
                 // Trailers
                 if (trailers.isNotEmpty) ...[
                   const SizedBox(height: 28),
@@ -465,6 +518,68 @@ class _MovieDetailContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ProvidersRow extends StatelessWidget {
+  final List<WatchProviderModel> providers;
+
+  const _ProvidersRow({required this.providers});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 56,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: providers.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final provider = providers[index];
+          return Tooltip(
+            message: provider.name,
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: provider.logoUrl.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: provider.logoUrl,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          width: 40,
+                          height: 40,
+                          color: AppTheme.cardDark,
+                          child: const Icon(
+                            Icons.tv,
+                            color: Colors.white54,
+                            size: 20,
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 4),
+                SizedBox(
+                  width: 50,
+                  child: Text(
+                    provider.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

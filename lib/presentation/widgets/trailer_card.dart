@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../data/models/video_model.dart';
 
@@ -39,18 +40,27 @@ class _TrailerCardState extends State<TrailerCard> {
     super.dispose();
   }
 
+  static const double _cardWidth = 260;
+  static const double _videoHeight = _cardWidth * 9 / 16;
+  static const double _controlsBarHeight = 10;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 260,
+      width: _cardWidth,
       margin: const EdgeInsets.only(right: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
+            child: SizedBox(
+              width: _cardWidth,
+              // Enquanto tocando, soma o espaço da barra de controles.
+              // Parado (thumbnail), usa só a altura 16:9.
+              height: _isPlaying
+                  ? _videoHeight + _controlsBarHeight
+                  : _videoHeight,
               child: _isPlaying && _controller != null
                   ? YoutubePlayer(
                       controller: _controller!,

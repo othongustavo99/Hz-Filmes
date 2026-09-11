@@ -35,7 +35,7 @@
   <img src="assets/screenshots/screenshot2.png" alt="Movie Card" width="180" />
   <img src="assets/screenshots/screenshot10.png" alt="See All" width="180" />
   <img src="assets/screenshots/screenshot6.png" alt="Look" width="180" />
-  <img src="assets/screenshots/screenshot11.png" alt="Trailers" width="180" />
+  <img src="assets/screenshots/screenshot1.png" alt="Trailers" width="180" />
 </p>
 
 ---

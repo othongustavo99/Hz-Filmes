@@ -105,7 +105,9 @@ class _MovieDetailContent extends StatelessWidget {
         // AppBar com Backdrop + Botão de Favorito
         SliverAppBar(
           expandedHeight: 280,
-          pinned: true,
+          pinned: false, // some junto com o scroll
+          floating: false, // não volta ao rolar um pouco
+          snap: false,
           backgroundColor: AppTheme.backgroundDark,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -402,8 +404,6 @@ class _MovieDetailContent extends StatelessWidget {
                     ),
                   ),
                 ],
-
-                
 
                 // Trailers
                 if (trailers.isNotEmpty) ...[

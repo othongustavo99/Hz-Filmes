@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import '../widgets/trailer_card.dart';
 import '../../data/models/video_model.dart';
 import '../blocs/favorites/favorites_bloc.dart';
 import '../widgets/movie_card.dart';
@@ -313,6 +313,7 @@ class _MovieDetailContent extends StatelessWidget {
                 const SizedBox(height: 28),
 
                 // Trailers
+                // Trailers
                 if (trailers.isNotEmpty) ...[
                   const SizedBox(height: 28),
                   const Text(
@@ -325,83 +326,12 @@ class _MovieDetailContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 160,
+                    height: 180,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: trailers.length,
                       itemBuilder: (context, index) {
-                        final trailer = trailers[index];
-                        return GestureDetector(
-                          onTap: () async {
-                            final uri = Uri.parse(trailer.youtubeUrl);
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(
-                                uri,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            }
-                          },
-                          child: Container(
-                            width: 240,
-                            margin: const EdgeInsets.only(right: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: CachedNetworkImage(
-                                        imageUrl: trailer.thumbnailUrl,
-                                        width: 240,
-                                        height: 135,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            Container(
-                                              color: AppTheme.cardDark,
-                                              height: 135,
-                                            ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                              color: AppTheme.cardDark,
-                                              height: 135,
-                                              child: const Icon(
-                                                Icons.play_circle,
-                                                color: Colors.white54,
-                                                size: 40,
-                                              ),
-                                            ),
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black45,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      padding: const EdgeInsets.all(8),
-                                      child: const Icon(
-                                        Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  trailer.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                        return TrailerCard(trailer: trailers[index]);
                       },
                     ),
                   ),

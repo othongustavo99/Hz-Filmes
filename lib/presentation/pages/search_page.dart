@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../domain/repositories/movie_repository.dart';
 import '../blocs/search/search_bloc.dart';
@@ -19,7 +20,6 @@ class SearchPage extends StatelessWidget {
     );
   }
 }
-
 
 class _SearchView extends StatefulWidget {
   const _SearchView();
@@ -83,10 +83,16 @@ class _SearchViewState extends State<_SearchView> {
               decoration: InputDecoration(
                 hintText: 'Buscar filmes...',
                 hintStyle: const TextStyle(color: AppTheme.textSecondary),
-                prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: AppTheme.textSecondary,
+                ),
                 suffixIcon: _controller.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppTheme.textSecondary),
+                        icon: const Icon(
+                          Icons.clear,
+                          color: AppTheme.textSecondary,
+                        ),
                         onPressed: () {
                           _controller.clear();
                           context.read<SearchBloc>().add(ClearSearch());
@@ -110,17 +116,54 @@ class _SearchViewState extends State<_SearchView> {
             child: BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {
                 if (state is SearchInitial) {
-                  return const Center(
-                    child: Text(
-                      'Digite o nome de um filme para buscar',
-                      style: TextStyle(color: AppTheme.textSecondary),
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppTheme.cardDark,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.search,
+                              size: 48,
+                              color: AppTheme.primaryOrange,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Buscar filmes',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Digite o nome de um filme\npara começar a buscar',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppTheme.textSecondary,
+                              fontSize: 14,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
 
                 if (state is SearchLoading) {
                   return const Center(
-                    child: CircularProgressIndicator(color: AppTheme.primaryOrange),
+                    child: CircularProgressIndicator(
+                      color: AppTheme.primaryOrange,
+                    ),
                   );
                 }
 
@@ -136,9 +179,44 @@ class _SearchViewState extends State<_SearchView> {
 
                 if (state is SearchEmpty) {
                   return Center(
-                    child: Text(
-                      'Nenhum resultado para "${state.query}"',
-                      style: const TextStyle(color: AppTheme.textSecondary),
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppTheme.cardDark,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.movie_filter_outlined,
+                              size: 48,
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            'Nenhum resultado para "${state.query}"',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Tente outro nome ou verifique a escrita',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppTheme.textSecondary,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -146,13 +224,15 @@ class _SearchViewState extends State<_SearchView> {
                 if (state is SearchLoaded) {
                   return GridView.builder(
                     controller: _scrollController,
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 0.55,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 12,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 0.55,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 12,
+                        ),
                     itemCount: state.hasReachedMax
                         ? state.movies.length
                         : state.movies.length + 1,
@@ -178,7 +258,8 @@ class _SearchViewState extends State<_SearchView> {
                             MaterialPageRoute(
                               builder: (context) => MovieDetailPage(
                                 movieId: movie.id,
-                                movieRepository: context.read<MovieRepository>(),
+                                movieRepository: context
+                                    .read<MovieRepository>(),
                               ),
                             ),
                           );

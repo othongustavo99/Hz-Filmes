@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hz_filmes/presentation/pages/favorites_page.dart';
-import 'search_page.dart';
 import '../../core/theme/app_theme.dart';
 import 'home_page.dart';
+import 'search_page.dart';
+import 'favorites_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -14,26 +14,28 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const SearchPage(),
-    const FavoritesPage(),
-  ];
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      HomePage(onSearchTap: () => _onTabTapped(1)),
+      const SearchPage(),
+      const FavoritesPage(),
+    ];
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _pages,
+        children: pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        onTap: _onTabTapped,
         backgroundColor: AppTheme.surfaceDark,
         selectedItemColor: AppTheme.primaryOrange,
         unselectedItemColor: AppTheme.textSecondary,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../domain/repositories/movie_repository.dart';
 import '../blocs/favorites/favorites_bloc.dart';
@@ -36,29 +37,45 @@ class FavoritesPage extends StatelessWidget {
 
           if (state is FavoritesLoaded) {
             if (state.favorites.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.bookmark_border, size: 64, color: AppTheme.textSecondary),
-                    SizedBox(height: 16),
-                    Text(
-                      'Sua lista está vazia',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 16,
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppTheme.cardDark,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.bookmark_border,
+                          size: 48,
+                          color: AppTheme.primaryOrange,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Toque no ícone de favorito nos filmes\npara adicioná-los aqui',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 13,
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Sua lista está vazia',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Toque no ícone de favorito nos filmes\npara salvá-los aqui',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
+import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -124,6 +125,7 @@ class _FeaturedBannerState extends State<FeaturedBanner> {
                     movieId: movie.id,
                     genreIds: movie.genreIds,
                   );
+                  ActivityRemoteDataSource().addClick(movie.id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -54,7 +54,7 @@ class HzFilmesApp extends StatelessWidget {
           
         ],
         child: MaterialApp(
-          title: 'HZ Filmes',
+          title: 'HzFilmes',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.darkTheme,
           home: const SplashPage(),

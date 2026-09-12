@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
+import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
+
 import '../../../data/models/movie_model.dart';
 import '../../../domain/repositories/movie_repository.dart';
 
@@ -35,17 +37,20 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       if (movies.isEmpty) {
         emit(SearchEmpty(query));
       } else {
-        emit(SearchLoaded(
-          movies: movies,
-          query: query,
-          currentPage: 1,
-          hasReachedMax: movies.length < 20, // TMDB retorna até 20 por página
-        ));
+        emit(
+          SearchLoaded(
+            movies: movies,
+            query: query,
+            currentPage: 1,
+            hasReachedMax: movies.length < 20, // TMDB retorna até 20 por página
+          ),
+        );
       }
+      await ActivityLocalDataSource().addSearch(query);
+      ActivityRemoteDataSource().addSearch(query);
     } catch (e) {
       emit(SearchError(e.toString()));
     }
-    await ActivityLocalDataSource().addSearch(query);
   }
 
   Future<void> _onLoadMore(
@@ -66,17 +71,21 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       );
 
       if (newMovies.isEmpty) {
-        emit(currentState.copyWith(
-          hasReachedMax: true,
-          isLoadingMore: false,
-        ));
+        emit(
+          currentState.copyWith(
+            hasReachedMax: true,
+            isLoadingMore: false,
+          ),
+        );
       } else {
-        emit(currentState.copyWith(
-          movies: [...currentState.movies, ...newMovies],
-          currentPage: nextPage,
-          hasReachedMax: newMovies.length < 20,
-          isLoadingMore: false,
-        ));
+        emit(
+          currentState.copyWith(
+            movies: [...currentState.movies, ...newMovies],
+            currentPage: nextPage,
+            hasReachedMax: newMovies.length < 20,
+            isLoadingMore: false,
+          ),
+        );
       }
     } catch (e) {
       emit(currentState.copyWith(isLoadingMore: false));

@@ -29,7 +29,7 @@
 <p align="center">
   <!-- Substitua pelos seus screenshots em assets/screenshots/ -->
   <img src="assets/screenshots/screenshot9.png" alt="Splash" width="180" />
-  <img src="assets/screenshots/screenshot5.png" alt="Home" width="180" />
+  <img src="assets/screenshots/screenshot4.png" alt="Home" width="180" />
   <img src="assets/screenshots/screenshot8.png" alt="Search" width="180" />
   <img src="assets/screenshots/screenshot7.png" alt="Favoritos" width="180" />
   <img src="assets/screenshots/screenshot2.png" alt="Movie Card" width="180" />

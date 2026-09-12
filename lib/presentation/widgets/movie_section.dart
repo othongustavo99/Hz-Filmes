@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
+import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 import 'package:hz_filmes/domain/repositories/movie_repository.dart';
 import 'package:hz_filmes/presentation/pages/movie_detail_page.dart';
 
@@ -66,10 +67,12 @@ class MovieSection extends StatelessWidget {
                 child: MovieCard(
                   movie: movies[index],
                   onTap: () {
+                    final movie = movies[index];
                     ActivityLocalDataSource().addClick(
                       movieId: movies[index].id, // ou movie.id
                       genreIds: movies[index].genreIds,
                     );
+                    ActivityRemoteDataSource().addClick(movie.id);
 
                     final movieRepository = context.read<MovieRepository>();
 

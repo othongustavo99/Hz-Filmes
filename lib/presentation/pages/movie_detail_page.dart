@@ -129,20 +129,35 @@ class _MovieDetailContent extends StatelessWidget {
                   onPressed: () {
                     context.read<FavoritesBloc>().add(ToggleFavorite(movie));
 
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          isFavorite
-                              ? 'Removido da Minha Lista'
-                              : 'Adicionado à Minha Lista',
+                        content: Row(
+                          children: [
+                            Icon(
+                              isFavorite
+                                  ? Icons.bookmark_remove
+                                  : Icons.bookmark,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              isFavorite
+                                  ? 'Removido da Minha Lista'
+                                  : 'Adicionado à Minha Lista',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
-                        backgroundColor: AppTheme.surfaceDark,
+                        backgroundColor: AppTheme.primaryOrange,
                         behavior: SnackBarBehavior.floating,
                         duration: const Duration(seconds: 2),
-                        action: SnackBarAction(
-                          label: 'OK',
-                          textColor: AppTheme.primaryOrange,
-                          onPressed: () {},
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     );

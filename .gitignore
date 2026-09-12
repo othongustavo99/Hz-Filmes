@@ -12,6 +12,10 @@
 .swiftpm/
 migrate_working_dir/
 
+# Backend
+hz-filmes-api/.env
+hz-filmes-api/node_modules/
+
 # IntelliJ related
 *.iml
 *.ipr

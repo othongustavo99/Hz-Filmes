@@ -119,6 +119,11 @@ class HomePage extends StatelessWidget {
                             );
                           },
                         ),
+                        if (state.recommended.isNotEmpty)
+                          MovieSection(
+                            title: 'Recomendados para você',
+                            movies: state.recommended,
+                          ),
                         MovieSection(
                           title: 'Populares',
                           movies: state.popular,

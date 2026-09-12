@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import '../../../data/models/movie_model.dart';
 import '../../../domain/repositories/movie_repository.dart';
 
@@ -44,6 +45,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     } catch (e) {
       emit(SearchError(e.toString()));
     }
+    await ActivityLocalDataSource().addSearch(query);
   }
 
   Future<void> _onLoadMore(

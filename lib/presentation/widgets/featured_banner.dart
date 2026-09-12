@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -119,6 +120,10 @@ class _FeaturedBannerState extends State<FeaturedBanner> {
               final movie = movies[index % movies.length];
               return GestureDetector(
                 onTap: () {
+                  ActivityLocalDataSource().addClick(
+                    movieId: movie.id,
+                    genreIds: movie.genreIds,
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(

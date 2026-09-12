@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../domain/repositories/movie_repository.dart';
@@ -94,6 +95,11 @@ class FavoritesPage extends StatelessWidget {
                 return MovieCard(
                   movie: movie,
                   onTap: () {
+                    ActivityLocalDataSource().addClick(
+                      movieId: movie.id,
+                      genreIds: movie.genreIds,
+                    );
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(

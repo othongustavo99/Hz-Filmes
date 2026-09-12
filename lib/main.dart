@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
+import 'package:hz_filmes/domain/repositories/services/recommendation_service.dart';
 import 'package:hz_filmes/presentation/blocs/favorites/favorites_bloc.dart';
 import 'package:flutter/services.dart';
 
@@ -30,17 +32,26 @@ class HzFilmesApp extends StatelessWidget {
     final MovieRepository movieRepository = MovieRepositoryImpl(
       remoteDataSource,
     );
+    final activityDataSource = ActivityLocalDataSource();
+    final recommendationService = RecommendationService(
+      movieRepository: movieRepository,
+      activityDataSource: activityDataSource,
+    );
 
     return RepositoryProvider<MovieRepository>.value(
       value: movieRepository,
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => HomeBloc(movieRepository)..add(LoadHomeData()),
+            create: (context) => HomeBloc(
+              movieRepository,
+              recommendationService,
+            )..add(LoadHomeData()),
           ),
           BlocProvider(
             create: (context) => FavoritesBloc()..add(LoadFavorites()),
           ),
+          
         ],
         child: MaterialApp(
           title: 'HZ Filmes',

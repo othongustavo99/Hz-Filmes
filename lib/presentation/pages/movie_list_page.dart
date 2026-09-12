@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../domain/repositories/movie_repository.dart';
 import '../blocs/movie_list/movie_list_bloc.dart';
@@ -116,6 +118,10 @@ class _MovieListViewState extends State<_MovieListView> {
                 return MovieCard(
                   movie: movie,
                   onTap: () {
+                    ActivityLocalDataSource().addClick(
+                      movieId: movie.id,
+                      genreIds: movie.genreIds,
+                    );
                     Navigator.push(
                       context,
                       MaterialPageRoute(

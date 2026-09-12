@@ -17,6 +17,7 @@ class HomeLoaded extends HomeState {
   final List<MovieModel> topRated;
   final List<MovieModel> upcoming;
   final List<MovieModel> nowPlaying;
+  final List<MovieModel> recommended; // novo
 
   const HomeLoaded({
     required this.trending,
@@ -24,10 +25,11 @@ class HomeLoaded extends HomeState {
     required this.topRated,
     required this.upcoming,
     required this.nowPlaying,
+    this.recommended = const [],
   });
 
   @override
-  List<Object?> get props => [trending, popular, topRated, upcoming, nowPlaying];
+  List<Object?> get props => [trending, popular, topRated, upcoming, nowPlaying, recommended];
 }
 
 class HomeError extends HomeState {
@@ -38,3 +40,4 @@ class HomeError extends HomeState {
   @override
   List<Object?> get props => [message];
 }
+

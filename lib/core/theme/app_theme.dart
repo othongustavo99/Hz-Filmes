@@ -35,13 +35,15 @@ class AppTheme {
         ),
         iconTheme: const IconThemeData(color: textPrimary),
       ),
-      textTheme: GoogleFonts.robotoTextTheme(
-        ThemeData.dark().textTheme,
-      ).apply(
-        bodyColor: textPrimary,
-        displayColor: textPrimary,
-      ),
-      cardTheme: CardThemeData(          // ← CORRIGIDO aqui
+      textTheme:
+          GoogleFonts.robotoTextTheme(
+            ThemeData.dark().textTheme,
+          ).apply(
+            bodyColor: textPrimary,
+            displayColor: textPrimary,
+          ),
+      cardTheme: CardThemeData(
+        // ← CORRIGIDO aqui
         color: cardDark,
         elevation: 4,
         shape: RoundedRectangleBorder(

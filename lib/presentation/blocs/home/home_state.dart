@@ -29,7 +29,14 @@ class HomeLoaded extends HomeState {
   });
 
   @override
-  List<Object?> get props => [trending, popular, topRated, upcoming, nowPlaying, recommended];
+  List<Object?> get props => [
+    trending,
+    popular,
+    topRated,
+    upcoming,
+    nowPlaying,
+    recommended,
+  ];
 }
 
 class HomeError extends HomeState {
@@ -40,4 +47,3 @@ class HomeError extends HomeState {
   @override
   List<Object?> get props => [message];
 }
-

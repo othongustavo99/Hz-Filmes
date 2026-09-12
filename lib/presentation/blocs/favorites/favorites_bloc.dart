@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../data/models/movie_model.dart';
 
 part 'favorites_event.dart';
@@ -63,21 +65,25 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final encoded = jsonEncode(
-        currentFavorites.map((m) => {
-          'id': m.id,
-          'title': m.title,
-          'overview': m.overview,
-          'poster_path': m.posterPath,
-          'backdrop_path': m.backdropPath,
-          'vote_average': m.voteAverage,
-          'vote_count': m.voteCount,
-          'release_date': m.releaseDate,
-          'genre_ids': m.genreIds,
-          'adult': m.adult,
-          'original_language': m.originalLanguage,
-          'original_title': m.originalTitle,
-          'popularity': m.popularity,
-        }).toList(),
+        currentFavorites
+            .map(
+              (m) => {
+                'id': m.id,
+                'title': m.title,
+                'overview': m.overview,
+                'poster_path': m.posterPath,
+                'backdrop_path': m.backdropPath,
+                'vote_average': m.voteAverage,
+                'vote_count': m.voteCount,
+                'release_date': m.releaseDate,
+                'genre_ids': m.genreIds,
+                'adult': m.adult,
+                'original_language': m.originalLanguage,
+                'original_title': m.originalTitle,
+                'popularity': m.popularity,
+              },
+            )
+            .toList(),
       );
 
       await prefs.setString(_favoritesKey, encoded);

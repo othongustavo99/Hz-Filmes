@@ -43,7 +43,13 @@ class SearchLoaded extends SearchState {
   }
 
   @override
-  List<Object?> get props => [movies, query, currentPage, hasReachedMax, isLoadingMore];
+  List<Object?> get props => [
+    movies,
+    query,
+    currentPage,
+    hasReachedMax,
+    isLoadingMore,
+  ];
 }
 
 class SearchEmpty extends SearchState {

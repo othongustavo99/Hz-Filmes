@@ -74,69 +74,66 @@ class _SplashPageState extends State<SplashPage>
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final progress = _controller.value;
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.white,
-    body: AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        final progress = _controller.value;
-
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            // Imagem ocupando toda a tela
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: Image.asset(
-                  'assets/image/image.png',
-                  fit: BoxFit.cover,
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              // Imagem ocupando toda a tela
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Image.asset(
+                    'assets/image/image.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
 
-            // Barra de carregamento
-            Positioned(
-              left: 40,
-              right: 40,
-              bottom: 45,
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 7,
-                      backgroundColor: Colors.white.withValues(alpha: 0.35),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFFFF6B00),
+              // Barra de carregamento
+              Positioned(
+                left: 40,
+                right: 40,
+                bottom: 45,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 7,
+                        backgroundColor: Colors.white.withValues(alpha: 0.35),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color(0xFFFF6B00),
+                        ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  Text(
-                    '${(progress * 100).toInt()}%',
-                    style: const TextStyle(
-                      color: Color(0xFFFF6B00),
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
+                    Text(
+                      '${(progress * 100).toInt()}%',
+                      style: const TextStyle(
+                        color: Color(0xFFFF6B00),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      },
-    ),
-  );
-}
-
-
+            ],
+          );
+        },
+      ),
+    );
+  }
 }

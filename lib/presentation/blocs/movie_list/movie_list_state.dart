@@ -39,7 +39,12 @@ class MovieListLoaded extends MovieListState {
   }
 
   @override
-  List<Object?> get props => [movies, currentPage, hasReachedMax, isLoadingMore];
+  List<Object?> get props => [
+    movies,
+    currentPage,
+    hasReachedMax,
+    isLoadingMore,
+  ];
 }
 
 class MovieListError extends MovieListState {

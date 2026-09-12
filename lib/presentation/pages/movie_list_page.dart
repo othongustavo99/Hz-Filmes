@@ -123,7 +123,7 @@ class _MovieListViewState extends State<_MovieListView> {
                       movieId: movie.id,
                       genreIds: movie.genreIds,
                     );
-                    
+
                     ActivityRemoteDataSource().addClick(movie.id);
                     Navigator.push(
                       context,

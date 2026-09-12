@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../core/constants/api_constants.dart';
 
 class MovieModel extends Equatable {
@@ -47,26 +48,35 @@ class MovieModel extends Equatable {
   factory MovieModel.fromJson(Map<String, dynamic> json) {
     return MovieModel(
       id: json['id'] as int,
-      title: json['title'] as String? ?? json['name'] as String? ?? 'Sem título',
+      title:
+          json['title'] as String? ?? json['name'] as String? ?? 'Sem título',
       overview: json['overview'] as String?,
       posterPath: json['poster_path'] as String?,
       backdropPath: json['backdrop_path'] as String?,
       voteAverage: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
       voteCount: json['vote_count'] as int? ?? 0,
-      releaseDate: json['release_date'] as String? ?? json['first_air_date'] as String?,
-      genreIds: (json['genre_ids'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+      releaseDate:
+          json['release_date'] as String? ?? json['first_air_date'] as String?,
+      genreIds:
+          (json['genre_ids'] as List<dynamic>?)
+              ?.map((e) => e as int)
+              .toList() ??
+          [],
       adult: json['adult'] as bool? ?? false,
       originalLanguage: json['original_language'] as String?,
-      originalTitle: json['original_title'] as String? ?? json['original_name'] as String?,
+      originalTitle:
+          json['original_title'] as String? ?? json['original_name'] as String?,
       popularity: (json['popularity'] as num?)?.toDouble() ?? 0.0,
       runtime: json['runtime'] as int?,
       tagline: json['tagline'] as String?,
       status: json['status'] as String?,
-      genres: (json['genres'] as List<dynamic>?)
+      genres:
+          (json['genres'] as List<dynamic>?)
               ?.map((e) => Genre.fromJson(e))
               .toList() ??
           [],
-      cast: (json['credits']?['cast'] as List<dynamic>?)
+      cast:
+          (json['credits']?['cast'] as List<dynamic>?)
               ?.map((e) => CastMember.fromJson(e))
               .toList() ??
           [],
@@ -104,25 +114,25 @@ class MovieModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        overview,
-        posterPath,
-        backdropPath,
-        voteAverage,
-        voteCount,
-        releaseDate,
-        genreIds,
-        adult,
-        originalLanguage,
-        originalTitle,
-        popularity,
-        runtime,
-        tagline,
-        status,
-        genres,
-        cast,
-      ];
+    id,
+    title,
+    overview,
+    posterPath,
+    backdropPath,
+    voteAverage,
+    voteCount,
+    releaseDate,
+    genreIds,
+    adult,
+    originalLanguage,
+    originalTitle,
+    popularity,
+    runtime,
+    tagline,
+    status,
+    genres,
+    cast,
+  ];
 }
 
 // Classes auxiliares

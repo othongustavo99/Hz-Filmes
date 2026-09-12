@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../data/models/movie_model.dart';
 import '../../../domain/repositories/movie_repository.dart';
 
@@ -49,11 +50,13 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
 
     try {
       final movies = await _fetch(1);
-      emit(MovieListLoaded(
-        movies: movies,
-        currentPage: 1,
-        hasReachedMax: type == MovieListType.trending || movies.length < 20,
-      ));
+      emit(
+        MovieListLoaded(
+          movies: movies,
+          currentPage: 1,
+          hasReachedMax: type == MovieListType.trending || movies.length < 20,
+        ),
+      );
     } catch (e) {
       emit(MovieListError(e.toString()));
     }
@@ -66,7 +69,8 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     final currentState = state;
     if (currentState is! MovieListLoaded) return;
     if (currentState.hasReachedMax || currentState.isLoadingMore) return;
-    if (type == MovieListType.trending) return; // trending não tem paginação fácil
+    if (type == MovieListType.trending)
+      return; // trending não tem paginação fácil
 
     emit(currentState.copyWith(isLoadingMore: true));
 
@@ -77,12 +81,14 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
       if (newMovies.isEmpty) {
         emit(currentState.copyWith(hasReachedMax: true, isLoadingMore: false));
       } else {
-        emit(currentState.copyWith(
-          movies: [...currentState.movies, ...newMovies],
-          currentPage: nextPage,
-          hasReachedMax: newMovies.length < 20,
-          isLoadingMore: false,
-        ));
+        emit(
+          currentState.copyWith(
+            movies: [...currentState.movies, ...newMovies],
+            currentPage: nextPage,
+            hasReachedMax: newMovies.length < 20,
+            isLoadingMore: false,
+          ),
+        );
       }
     } catch (e) {
       emit(currentState.copyWith(isLoadingMore: false));

@@ -3,6 +3,7 @@ import 'package:hz_filmes/data/models/movie_model.dart';
 import 'package:hz_filmes/domain/repositories/movie_repository.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'dart:convert';
 
 class RecommendationService {

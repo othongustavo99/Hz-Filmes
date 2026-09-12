@@ -51,7 +51,6 @@ class HzFilmesApp extends StatelessWidget {
           BlocProvider(
             create: (context) => FavoritesBloc()..add(LoadFavorites()),
           ),
-          
         ],
         child: MaterialApp(
           title: 'HzFilmes',

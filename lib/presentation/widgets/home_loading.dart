@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+
 import '../../core/theme/app_theme.dart';
 
 class HomeLoadingShimmer extends StatelessWidget {
@@ -92,4 +93,4 @@ class _SectionSkeleton extends StatelessWidget {
       ],
     );
   }
-} 
+}

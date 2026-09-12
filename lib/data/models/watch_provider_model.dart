@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../core/constants/api_constants.dart';
 
 class WatchProviderModel extends Equatable {
@@ -60,8 +61,7 @@ class WatchProvidersResult extends Equatable {
     );
   }
 
-  bool get isEmpty =>
-      flatrate.isEmpty && rent.isEmpty && buy.isEmpty;
+  bool get isEmpty => flatrate.isEmpty && rent.isEmpty && buy.isEmpty;
 
   @override
   List<Object?> get props => [flatrate, rent, buy, link];

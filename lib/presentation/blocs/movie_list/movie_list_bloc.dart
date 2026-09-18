@@ -20,17 +20,27 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
   final MovieRepository movieRepository;
   final MovieListType type;
   final MediaCategory category;
+  final int? genreId;
 
   MovieListBloc({
     required this.movieRepository,
     required this.type,
     this.category = MediaCategory.movies,
+    this.genreId,
   }) : super(MovieListInitial()) {
     on<LoadMovieList>(_onLoad);
     on<LoadMoreMovies>(_onLoadMore);
   }
+  
 
   Future<List<MovieModel>> _fetch(int page) {
+    if (genreId != null) {
+      return movieRepository.getByGenre(
+        category,
+        genreId!,
+        page: page,
+      );
+    }
     switch (type) {
       case MovieListType.popular:
         return movieRepository.getPopular(category, page: page);
@@ -44,6 +54,7 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
         return movieRepository.getTrending(category);
     }
   }
+  
 
   Future<void> _onLoad(
     LoadMovieList event,

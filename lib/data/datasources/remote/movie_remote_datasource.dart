@@ -21,6 +21,11 @@ abstract class MovieRemoteDataSource {
     MediaCategory category, {
     int page = 1,
   });
+  Future<List<MovieModel>> getByGenre(
+    MediaCategory category,
+    int genreId, {
+    int page = 1,
+  });
   Future<MovieModel> getDetails(int id, {required bool isTv});
   Future<List<MovieModel>> getSimilar(int id, {required bool isTv});
   Future<List<VideoModel>> getVideos(int id, {required bool isTv});
@@ -231,6 +236,87 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
       },
     );
     return _parseMovieList(response);
+  }
+
+  // ---------- FILTRO POR GÊNERO ----------
+  @override
+  Future<List<MovieModel>> getByGenre(
+    MediaCategory category,
+    int genreId, {
+    int page = 1,
+  }) async {
+    switch (category) {
+      // ==================== FILMES ====================
+      case MediaCategory.movies:
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverMovie,
+          queryParameters: {
+            'with_genres': genreId,
+            'sort_by': 'popularity.desc',
+            'page': page,
+            'include_adult': false,
+          },
+        );
+
+        return _parseMovieList(response);
+
+      // ==================== SÉRIES ====================
+      case MediaCategory.series:
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverTv,
+          queryParameters: {
+            'with_genres': genreId,
+            'sort_by': 'popularity.desc',
+            'page': page,
+            'include_adult': false,
+          },
+        );
+
+        return _parseMovieList(response);
+
+      // ==================== ANIMES ====================
+      case MediaCategory.animes:
+        final Map<String, dynamic> params = {
+          'with_genres': genreId == ApiConstants.genreAnimation
+              ? '${ApiConstants.genreAnimation}'
+              : '${ApiConstants.genreAnimation},$genreId',
+          'with_original_language': 'ja',
+          'sort_by': 'popularity.desc',
+          'page': page,
+          'include_adult': false,
+        };
+
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverTv,
+          queryParameters: params,
+        );
+
+        return _parseMovieList(response);
+
+      // ==================== NOVELAS ====================
+      case MediaCategory.novelas:
+        final String genres;
+
+        if (genreId == ApiConstants.genreSoap) {
+          // "Todas"
+          genres = '${ApiConstants.genreSoap}|${ApiConstants.genreDrama}';
+        } else {
+          genres = '$genreId';
+        }
+
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverTv,
+          queryParameters: {
+            'with_genres': genres,
+            'with_original_language': 'pt|es',
+            'sort_by': 'popularity.desc',
+            'page': page,
+            'include_adult': false,
+          },
+        );
+
+        return _parseMovieList(response);
+    }
   }
 
   // ---------- DETAILS ----------

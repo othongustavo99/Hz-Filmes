@@ -31,12 +31,19 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<List<MovieModel>> getNowPlaying(MediaCategory category, {int page = 1}) {
+  Future<List<MovieModel>> getNowPlaying(
+    MediaCategory category, {
+    int page = 1,
+  }) {
     return remoteDataSource.getNowPlaying(category, page: page);
   }
 
   @override
-  Future<List<MovieModel>> search(String query, MediaCategory category, {int page = 1}) {
+  Future<List<MovieModel>> search(
+    String query,
+    MediaCategory category, {
+    int page = 1,
+  }) {
     return remoteDataSource.search(query, category, page: page);
   }
 
@@ -58,5 +65,18 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<WatchProvidersResult> getWatchProviders(int id, {required bool isTv}) {
     return remoteDataSource.getWatchProviders(id, isTv: isTv);
+  }
+
+  @override
+  Future<List<MovieModel>> getByGenre(
+    MediaCategory category,
+    int genreId, {
+    int page = 1,
+  }) {
+    return remoteDataSource.getByGenre(
+      category,
+      genreId,
+      page: page,
+    );
   }
 }

@@ -17,6 +17,11 @@ abstract class MovieRepository {
     MediaCategory category, {
     int page = 1,
   });
+  Future<List<MovieModel>> getByGenre(
+    MediaCategory category,
+    int genreId, {
+    int page = 1,
+  });
   Future<MovieModel> getDetails(int id, {required bool isTv});
   Future<List<MovieModel>> getSimilar(int id, {required bool isTv});
   Future<List<VideoModel>> getVideos(int id, {required bool isTv});

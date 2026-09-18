@@ -29,6 +29,7 @@ class ApiConstants {
   static const String tvDetails = '/tv'; // + /{id}
 
   // ==================== DISCOVER ====================
+  static const String discoverMovie = '/discover/movie';
   static const String discoverTv = '/discover/tv';
 
   // Gêneros

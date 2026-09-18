@@ -22,10 +22,13 @@ class ActivityRemoteDataSource {
       // silencioso: não quebra o app se a API estiver offline
     }
   }
+  
 
   Future<void> addClick(int movieId) async {
     try {
       await _dio.post('/activity/click', data: {'movieId': movieId});
     } catch (_) {}
   }
+  
 }
+

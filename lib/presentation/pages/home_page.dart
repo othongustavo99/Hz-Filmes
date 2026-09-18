@@ -12,8 +12,13 @@ import 'movie_list_page.dart';
 
 class HomePage extends StatefulWidget {
   final VoidCallback? onSearchTap;
+  final VoidCallback? onMenuTap;
 
-  const HomePage({super.key, this.onSearchTap});
+  const HomePage({
+    super.key,
+    this.onSearchTap,
+    this.onMenuTap,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -96,6 +101,18 @@ class _HomePageState extends State<HomePage> {
                     elevation: 0,
                     title: Row(
                       children: [
+                        IconButton(
+                          onPressed: widget.onMenuTap,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -114,7 +131,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
+
                         const SizedBox(width: 8),
+
                         const Text(
                           'Filmes',
                           style: TextStyle(
@@ -127,7 +146,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     actions: [
                       IconButton(
-                        icon: const Icon(Icons.search, color: Colors.white),
+                        icon: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
                         onPressed: widget.onSearchTap,
                       ),
                     ],

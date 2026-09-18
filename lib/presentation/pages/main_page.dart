@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../widgets/catalog_drawer.dart';
 import 'home_page.dart';
 import 'search_page.dart';
 import 'favorites_page.dart';
@@ -13,6 +14,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
@@ -24,16 +27,26 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      HomePage(onSearchTap: () => _onTabTapped(1)),
+      HomePage(
+        onSearchTap: () => _onTabTapped(1),
+        onMenuTap: () {
+          _scaffoldKey.currentState?.openDrawer();
+        },
+      ),
       const SearchPage(),
       const FavoritesPage(),
     ];
 
     return Scaffold(
+      key: _scaffoldKey,
+
+      drawer: const CatalogDrawer(),
+
       body: IndexedStack(
         index: _currentIndex,
         children: pages,
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,

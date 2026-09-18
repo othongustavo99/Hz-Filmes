@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hz_filmes/core/constants/media_category.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 import 'package:hz_filmes/domain/repositories/movie_repository.dart';
@@ -26,6 +25,7 @@ class MovieSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (movies.isEmpty) return const SizedBox.shrink();
+    final movieRepository = context.read<MovieRepository>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +66,8 @@ class MovieSection extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 child: MovieCard(
                   movie: movies[index],
+                  isTv: isTv,
+                  movieRepository: movieRepository,
                   onTap: () {
                     final movie = movies[index];
 

@@ -117,6 +117,8 @@ class _GenreListViewState extends State<_GenreListView> {
                 final movie = state.movies[index];
                 return MovieCard(
                   movie: movie,
+                  isTv: widget.isTv,
+                  movieRepository: context.read<MovieRepository>(),
                   onTap: () {
                     ActivityLocalDataSource().addClick(
                       movieId: movie.id,

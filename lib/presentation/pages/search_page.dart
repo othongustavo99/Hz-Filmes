@@ -357,6 +357,8 @@ class _SearchViewState extends State<_SearchView> {
 
                       return MovieCard(
                         movie: movie,
+                        isTv: state.category.isTv,
+                        movieRepository: context.read<MovieRepository>(),
                         onTap: () {
                           ActivityLocalDataSource().addClick(
                             movieId: movie.id,

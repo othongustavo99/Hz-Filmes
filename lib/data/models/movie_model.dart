@@ -19,6 +19,8 @@ class MovieModel extends Equatable {
 
   // Campos extras (usados na página de detalhes)
   final int? runtime;
+  final int? numberOfSeasons;
+  final int? numberOfEpisodes;
   final String? tagline;
   final String? status;
   final List<Genre> genres;
@@ -39,6 +41,8 @@ class MovieModel extends Equatable {
     this.originalTitle,
     required this.popularity,
     this.runtime,
+    this.numberOfSeasons,
+    this.numberOfEpisodes,
     this.tagline,
     this.status,
     this.genres = const [],
@@ -68,6 +72,8 @@ class MovieModel extends Equatable {
           json['original_title'] as String? ?? json['original_name'] as String?,
       popularity: (json['popularity'] as num?)?.toDouble() ?? 0.0,
       runtime: json['runtime'] as int?,
+      numberOfSeasons: json['number_of_seasons'] as int?,
+      numberOfEpisodes: json['number_of_episodes'] as int?,
       tagline: json['tagline'] as String?,
       status: json['status'] as String?,
       genres:
@@ -128,6 +134,8 @@ class MovieModel extends Equatable {
     originalTitle,
     popularity,
     runtime,
+    numberOfSeasons,
+    numberOfEpisodes,
     tagline,
     status,
     genres,

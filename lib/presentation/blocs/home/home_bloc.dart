@@ -30,9 +30,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         movieRepository.getTopRated(event.category),
         movieRepository.getUpcoming(event.category),
         movieRepository.getNowPlaying(event.category),
-        // Recomendações ainda baseadas em filmes por enquanto
-        // (depois podemos melhorar para respeitar a categoria)
-        recommendationService.getRecommendations(),
+
+        recommendationService.getRecommendations(
+          event.category,
+        ),
       ]);
 
       emit(

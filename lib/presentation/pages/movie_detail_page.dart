@@ -29,7 +29,8 @@ class MovieDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          MovieDetailBloc(movieRepository)..add(LoadMovieDetail(movieId, isTv: isTv)),
+          MovieDetailBloc(movieRepository)
+            ..add(LoadMovieDetail(movieId, isTv: isTv)),
       child: _MovieDetailView(isTv: isTv),
     );
   }
@@ -259,16 +260,52 @@ class _MovieDetailContent extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 8),
+                          // ==================== INFORMAÇÕES ====================
                           Text(
                             [
                               if (movie.year.isNotEmpty) movie.year,
-                              if (movie.runtimeFormatted.isNotEmpty)
+
+                              // Filmes mostram duração.
+                              if (!isTv && movie.runtimeFormatted.isNotEmpty)
                                 movie.runtimeFormatted,
                             ].join(' • '),
                             style: const TextStyle(
                               color: AppTheme.textSecondary,
                             ),
                           ),
+
+                          // ==================== TEMPORADAS E EPISÓDIOS ====================
+                          if (isTv &&
+                              (movie.numberOfSeasons != null ||
+                                  movie.numberOfEpisodes != null)) ...[
+                            const SizedBox(height: 12),
+
+                            Row(
+                              children: [
+                                if (movie.numberOfSeasons != null)
+                                  _TvInfoItem(
+                                    icon: Icons.layers_outlined,
+                                    value: '${movie.numberOfSeasons}',
+                                    label: movie.numberOfSeasons == 1
+                                        ? 'Temporada'
+                                        : 'Temporadas',
+                                  ),
+
+                                if (movie.numberOfSeasons != null &&
+                                    movie.numberOfEpisodes != null)
+                                  const SizedBox(width: 16),
+
+                                if (movie.numberOfEpisodes != null)
+                                  _TvInfoItem(
+                                    icon: Icons.play_circle_outline,
+                                    value: '${movie.numberOfEpisodes}',
+                                    label: movie.numberOfEpisodes == 1
+                                        ? 'Episódio'
+                                        : 'Episódios',
+                                  ),
+                              ],
+                            ),
+                          ],
                           if (movie.genres.isNotEmpty) ...[
                             const SizedBox(height: 12),
                             Wrap(
@@ -532,8 +569,8 @@ class _MovieDetailContent extends StatelessWidget {
                 // Filmes Semelhantes
                 if (similarMovies.isNotEmpty) ...[
                   const SizedBox(height: 32),
-                  const Text(
-                    'Filmes Semelhantes',
+                  Text(
+                    isTv ? 'Conteúdos Semelhantes' : 'Filmes Semelhantes',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -561,8 +598,7 @@ class _MovieDetailContent extends StatelessWidget {
                                     movieId: similarMovie.id,
                                     movieRepository: context
                                         .read<MovieRepository>(),
-                                        isTv: isTv,
-                                        
+                                    isTv: isTv,
                                   ),
                                 ),
                               );
@@ -577,6 +613,49 @@ class _MovieDetailContent extends StatelessWidget {
                 const SizedBox(height: 40),
               ],
             ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TvInfoItem extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+
+  const _TvInfoItem({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: AppTheme.primaryOrange,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 13,
           ),
         ),
       ],

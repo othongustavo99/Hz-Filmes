@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hz_filmes/domain/repositories/services/recommendation_service.dart';
+import 'package:hz_filmes/core/constants/media_category.dart';
 
 import '../../../data/models/movie_model.dart';
 import '../../../domain/repositories/movie_repository.dart';
@@ -24,16 +25,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoading());
     try {
       final results = await Future.wait([
-        movieRepository.getTrendingMovies(),
-        movieRepository.getPopularMovies(),
-        movieRepository.getTopRatedMovies(),
-        movieRepository.getUpcomingMovies(),
-        movieRepository.getNowPlaying(),
+        movieRepository.getTrending(event.category),
+        movieRepository.getPopular(event.category),
+        movieRepository.getTopRated(event.category),
+        movieRepository.getUpcoming(event.category),
+        movieRepository.getNowPlaying(event.category),
+        // Recomendações ainda baseadas em filmes por enquanto
+        // (depois podemos melhorar para respeitar a categoria)
         recommendationService.getRecommendations(),
       ]);
 
       emit(
         HomeLoaded(
+          category: event.category,
           trending: results[0] as List<MovieModel>,
           popular: results[1] as List<MovieModel>,
           topRated: results[2] as List<MovieModel>,

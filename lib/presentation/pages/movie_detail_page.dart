@@ -16,25 +16,28 @@ import '../blocs/movie_detail/movie_detail_bloc.dart';
 class MovieDetailPage extends StatelessWidget {
   final int movieId;
   final MovieRepository movieRepository;
+  final bool isTv;
 
   const MovieDetailPage({
     super.key,
     required this.movieId,
     required this.movieRepository,
+    this.isTv = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          MovieDetailBloc(movieRepository)..add(LoadMovieDetail(movieId)),
-      child: const _MovieDetailView(),
+          MovieDetailBloc(movieRepository)..add(LoadMovieDetail(movieId, isTv: isTv)),
+      child: _MovieDetailView(isTv: isTv),
     );
   }
 }
 
 class _MovieDetailView extends StatelessWidget {
-  const _MovieDetailView();
+  final bool isTv;
+  const _MovieDetailView({this.isTv = false});
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +78,7 @@ class _MovieDetailView extends StatelessWidget {
               similarMovies: state.similarMovies,
               trailers: state.trailers,
               watchProviders: state.watchProviders,
+              isTv: isTv,
             );
           }
 
@@ -90,12 +94,14 @@ class _MovieDetailContent extends StatelessWidget {
   final List<MovieModel> similarMovies;
   final List<VideoModel> trailers;
   final WatchProvidersResult watchProviders;
+  final bool isTv;
 
   const _MovieDetailContent({
     required this.movie,
     this.similarMovies = const [],
     this.trailers = const [],
     this.watchProviders = const WatchProvidersResult(),
+    this.isTv = false,
   });
 
   @override
@@ -555,6 +561,8 @@ class _MovieDetailContent extends StatelessWidget {
                                     movieId: similarMovie.id,
                                     movieRepository: context
                                         .read<MovieRepository>(),
+                                        isTv: isTv,
+                                        
                                   ),
                                 ),
                               );

@@ -1,3 +1,4 @@
+import 'package:hz_filmes/core/constants/media_category.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:hz_filmes/data/models/movie_model.dart';
 import 'package:hz_filmes/domain/repositories/movie_repository.dart';
@@ -52,7 +53,7 @@ class RecommendationService {
     // Similar aos filmes seed (favoritos + cliques)
     for (final id in seedIds.take(5)) {
       try {
-        final similar = await movieRepository.getSimilarMovies(id);
+        final similar = await movieRepository.getSimilar(id, isTv: false);
         for (final m in similar) {
           if (seen.add(m.id) && !seedIds.contains(m.id)) {
             recommended.add(m);
@@ -65,7 +66,7 @@ class RecommendationService {
     // Resultados das últimas buscas
     for (final query in searchQueries.take(3)) {
       try {
-        final results = await movieRepository.searchMovies(query);
+       final results = await movieRepository.search(query, MediaCategory.movies);
         for (final m in results.take(5)) {
           if (seen.add(m.id) && !seedIds.contains(m.id)) {
             recommended.add(m);

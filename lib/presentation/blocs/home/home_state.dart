@@ -12,14 +12,16 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
+  final MediaCategory category;
   final List<MovieModel> trending;
   final List<MovieModel> popular;
   final List<MovieModel> topRated;
   final List<MovieModel> upcoming;
   final List<MovieModel> nowPlaying;
-  final List<MovieModel> recommended; // novo
+  final List<MovieModel> recommended;
 
   const HomeLoaded({
+    required this.category,
     required this.trending,
     required this.popular,
     required this.topRated,
@@ -30,6 +32,7 @@ class HomeLoaded extends HomeState {
 
   @override
   List<Object?> get props => [
+    category,
     trending,
     popular,
     topRated,

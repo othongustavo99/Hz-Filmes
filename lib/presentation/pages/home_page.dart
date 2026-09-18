@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../blocs/movie_list/movie_list_bloc.dart';
-import 'movie_list_page.dart';
-import '../widgets/featured_banner.dart';
-import '../widgets/home_loading.dart';
+import '../../core/constants/media_category.dart';
 import '../../core/theme/app_theme.dart';
 import '../blocs/home/home_bloc.dart';
+import '../blocs/movie_list/movie_list_bloc.dart';
+import '../widgets/featured_banner.dart';
+import '../widgets/home_loading.dart';
 import '../widgets/movie_section.dart';
+import 'movie_list_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final VoidCallback? onSearchTap;
 
   const HomePage({super.key, this.onSearchTap});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  MediaCategory _selectedCategory = MediaCategory.movies;
+
+  void _onCategoryChanged(MediaCategory category) {
+    if (_selectedCategory == category) return;
+
+    setState(() {
+      _selectedCategory = category;
+    });
+
+    context.read<HomeBloc>().add(LoadHomeData(category: category));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +49,26 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // ... seu empty/error state atual
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      state.message,
+                      style: const TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<HomeBloc>().add(
+                          LoadHomeData(category: _selectedCategory),
+                        );
+                      },
+                      child: const Text('Tentar novamente'),
+                    ),
                   ],
                 ),
               ),
@@ -43,15 +80,18 @@ class HomePage extends StatelessWidget {
               color: AppTheme.primaryOrange,
               backgroundColor: AppTheme.surfaceDark,
               onRefresh: () async {
-                context.read<HomeBloc>().add(LoadHomeData());
+                context.read<HomeBloc>().add(
+                  LoadHomeData(category: _selectedCategory),
+                );
               },
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
+                  // ==================== APP BAR ====================
                   SliverAppBar(
-                    floating: false, // não volta ao rolar um pouco pra cima
-                    snap: false, // não “pula” de volta
-                    pinned: false, // não fica fixa
+                    floating: false,
+                    snap: false,
+                    pinned: false,
                     backgroundColor: AppTheme.backgroundDark,
                     elevation: 0,
                     title: Row(
@@ -88,13 +128,68 @@ class HomePage extends StatelessWidget {
                     actions: [
                       IconButton(
                         icon: const Icon(Icons.search, color: Colors.white),
-                        onPressed: onSearchTap,
+                        onPressed: widget.onSearchTap,
                       ),
                     ],
                   ),
-                  // Conteúdo das seções
+
+                  // ==================== ABAS ====================
+                  // ==================== ABAS ====================
                   SliverToBoxAdapter(
-                    // ⚠️ corrija para SliverToBoxAdapter
+                    child: SizedBox(
+                      height: 52,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        children: MediaCategory.values.map((category) {
+                          final isSelected = _selectedCategory == category;
+
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: GestureDetector(
+                              onTap: () => _onCategoryChanged(category),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      AppTheme.surfaceDark, // mesma cor sempre
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppTheme
+                                              .primaryOrange // borda laranja selecionado
+                                        : Colors.white24, // borda suave quando não
+                                    width: isSelected ? 1.5 : 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  category.label,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? AppTheme.primaryOrange
+                                        : Colors.white,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+
+                  // ==================== CONTEÚDO ====================
+                  SliverToBoxAdapter(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -102,88 +197,106 @@ class HomePage extends StatelessWidget {
                           movies: state.trending.isNotEmpty
                               ? state.trending
                               : state.popular,
+                          isTv: _selectedCategory.isTv,
                         ),
 
                         MovieSection(
                           title: 'Em Alta',
                           movies: state.trending,
+                          isTv: _selectedCategory.isTv,
                           onSeeAll: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const MovieListPage(
+                                builder: (_) => MovieListPage(
                                   title: 'Em Alta',
                                   type: MovieListType.trending,
+                                  category: _selectedCategory,
                                 ),
                               ),
                             );
                           },
                         ),
+
                         if (state.recommended.isNotEmpty)
                           MovieSection(
                             title: 'Recomendados para você',
                             movies: state.recommended,
+                            isTv: _selectedCategory.isTv,
                           ),
+
                         MovieSection(
                           title: 'Populares',
                           movies: state.popular,
+                          isTv: _selectedCategory.isTv,
                           onSeeAll: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const MovieListPage(
+                                builder: (_) => MovieListPage(
                                   title: 'Populares',
                                   type: MovieListType.popular,
+                                  category: _selectedCategory,
                                 ),
                               ),
                             );
                           },
                         ),
+
                         MovieSection(
                           title: 'Melhores Avaliados',
                           movies: state.topRated,
+                          isTv: _selectedCategory.isTv,
                           onSeeAll: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const MovieListPage(
+                                builder: (_) => MovieListPage(
                                   title: 'Melhores Avaliados',
                                   type: MovieListType.topRated,
+                                  category: _selectedCategory,
                                 ),
                               ),
                             );
                           },
                         ),
+
                         MovieSection(
                           title: 'Em Breve',
                           movies: state.upcoming,
+                          isTv: _selectedCategory.isTv,
                           onSeeAll: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const MovieListPage(
+                                builder: (_) => MovieListPage(
                                   title: 'Em Breve',
                                   type: MovieListType.upcoming,
+                                  category: _selectedCategory,
                                 ),
                               ),
                             );
                           },
                         ),
+
                         MovieSection(
                           title: 'Em Cartaz',
                           movies: state.nowPlaying,
+                          isTv: _selectedCategory.isTv,
                           onSeeAll: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const MovieListPage(
+                                builder: (_) => MovieListPage(
                                   title: 'Em Cartaz',
                                   type: MovieListType.nowPlaying,
+                                  category: _selectedCategory,
                                 ),
                               ),
                             );
                           },
                         ),
+
                         const SizedBox(height: 40),
                       ],
                     ),

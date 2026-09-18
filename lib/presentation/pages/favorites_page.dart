@@ -108,6 +108,8 @@ class FavoritesPage extends StatelessWidget {
                         builder: (context) => MovieDetailPage(
                           movieId: movie.id,
                           movieRepository: context.read<MovieRepository>(),
+                          
+                          
                         ),
                       ),
                     );

@@ -1,16 +1,16 @@
 class ApiConstants {
-  static const String apiKey = 'Sua api aqui';
+  static const String apiKey = '3fb520ec1865d9c239702b3be923c20c';
 
   static const String baseUrl = 'https://api.themoviedb.org/3';
   static const String imageBaseUrl = 'https://image.tmdb.org/t/p/';
   static const String backendBaseUrl = 'http://192.168.0.2:3000';
 
-  // Tamanhos de imagem comuns
+  // Tamanhos de imagem
   static const String posterSize = 'w500';
   static const String backdropSize = 'w1280';
   static const String profileSize = 'w185';
 
-  // Endpoints principais
+  // ==================== FILMES ====================
   static const String trendingMovies = '/trending/movie/week';
   static const String popularMovies = '/movie/popular';
   static const String topRatedMovies = '/movie/top_rated';
@@ -18,4 +18,21 @@ class ApiConstants {
   static const String nowPlaying = '/movie/now_playing';
   static const String searchMovie = '/search/movie';
   static const String movieDetails = '/movie'; // + /{id}
+
+  // ==================== SÉRIES (TV) ====================
+  static const String trendingTv = '/trending/tv/week';
+  static const String popularTv = '/tv/popular';
+  static const String topRatedTv = '/tv/top_rated';
+  static const String onTheAir = '/tv/on_the_air';
+  static const String airingToday = '/tv/airing_today';
+  static const String searchTv = '/search/tv';
+  static const String tvDetails = '/tv'; // + /{id}
+
+  // ==================== DISCOVER ====================
+  static const String discoverTv = '/discover/tv';
+
+  // Gêneros
+  static const int genreAnimation = 16;
+  static const int genreDrama = 18;
+  static const int genreSoap = 10766;
 }

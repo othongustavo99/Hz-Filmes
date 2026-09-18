@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/core/constants/media_category.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 import 'package:hz_filmes/domain/repositories/movie_repository.dart';
@@ -12,12 +13,14 @@ class MovieSection extends StatelessWidget {
   final String title;
   final List<MovieModel> movies;
   final VoidCallback? onSeeAll;
+  final bool isTv;
 
   const MovieSection({
     super.key,
     required this.title,
     required this.movies,
     this.onSeeAll,
+    this.isTv = false,
   });
 
   @override
@@ -27,7 +30,6 @@ class MovieSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Título da seção
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
           child: Row(
@@ -52,8 +54,6 @@ class MovieSection extends StatelessWidget {
             ],
           ),
         ),
-
-        // Lista horizontal
         SizedBox(
           height: 260,
           child: ListView.builder(
@@ -68,9 +68,10 @@ class MovieSection extends StatelessWidget {
                   movie: movies[index],
                   onTap: () {
                     final movie = movies[index];
+
                     ActivityLocalDataSource().addClick(
-                      movieId: movies[index].id, // ou movie.id
-                      genreIds: movies[index].genreIds,
+                      movieId: movie.id,
+                      genreIds: movie.genreIds,
                     );
                     ActivityRemoteDataSource().addClick(movie.id);
 
@@ -80,8 +81,9 @@ class MovieSection extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => MovieDetailPage(
-                          movieId: movies[index].id,
+                          movieId: movie.id,
                           movieRepository: movieRepository,
+                          isTv: isTv,
                         ),
                       ),
                     );

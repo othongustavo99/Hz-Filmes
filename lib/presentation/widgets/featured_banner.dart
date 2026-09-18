@@ -14,8 +14,13 @@ import '../pages/movie_detail_page.dart';
 
 class FeaturedBanner extends StatefulWidget {
   final List<MovieModel> movies;
+  final bool isTv;
 
-  const FeaturedBanner({super.key, required this.movies});
+  const FeaturedBanner({
+    super.key,
+    required this.movies,
+    this.isTv = false,
+  });
 
   @override
   State<FeaturedBanner> createState() => _FeaturedBannerState();
@@ -132,6 +137,7 @@ class _FeaturedBannerState extends State<FeaturedBanner> {
                       builder: (context) => MovieDetailPage(
                         movieId: movie.id,
                         movieRepository: context.read<MovieRepository>(),
+                        isTv: widget.isTv,
                       ),
                     ),
                   );

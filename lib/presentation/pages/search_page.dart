@@ -268,6 +268,8 @@ class _SearchViewState extends State<_SearchView> {
                                 movieId: movie.id,
                                 movieRepository: context
                                     .read<MovieRepository>(),
+                                    
+                                    
                               ),
                             ),
                           );

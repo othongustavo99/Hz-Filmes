@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/core/constants/media_category.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 
@@ -32,7 +33,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(SearchLoading());
 
     try {
-      final movies = await movieRepository.searchMovies(query, page: 1);
+      final movies = await movieRepository.search(query, MediaCategory.movies, page: 1);
 
       if (movies.isEmpty) {
         emit(SearchEmpty(query));
@@ -65,8 +66,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final nextPage = currentState.currentPage + 1;
-      final newMovies = await movieRepository.searchMovies(
+      final newMovies = await movieRepository.search (
         currentState.query,
+        MediaCategory.movies,
         page: nextPage,
       );
 

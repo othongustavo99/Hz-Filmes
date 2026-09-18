@@ -24,10 +24,10 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
 
     try {
       final results = await Future.wait([
-        movieRepository.getMovieDetails(event.movieId),
-        movieRepository.getSimilarMovies(event.movieId),
-        movieRepository.getMovieVideos(event.movieId),
-        movieRepository.getWatchProviders(event.movieId),
+        movieRepository.getDetails(event.movieId, isTv: event.isTv),
+        movieRepository.getSimilar(event.movieId, isTv: event.isTv),
+        movieRepository.getVideos(event.movieId, isTv: event.isTv),
+        movieRepository.getWatchProviders(event.movieId, isTv: event.isTv),
       ]);
 
       final movie = results[0] as MovieModel;

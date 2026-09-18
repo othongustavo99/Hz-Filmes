@@ -7,4 +7,11 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadHomeData extends HomeEvent {}
+class LoadHomeData extends HomeEvent {
+  final MediaCategory category;
+
+  const LoadHomeData({this.category = MediaCategory.movies});
+
+  @override
+  List<Object> get props => [category];
+}

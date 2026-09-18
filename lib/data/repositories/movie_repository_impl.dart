@@ -1,4 +1,5 @@
 import '../../domain/repositories/movie_repository.dart';
+import '../../core/constants/media_category.dart';
 import '../datasources/remote/movie_remote_datasource.dart';
 import '../models/movie_model.dart';
 import '../models/video_model.dart';
@@ -10,52 +11,52 @@ class MovieRepositoryImpl implements MovieRepository {
   MovieRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<List<MovieModel>> getTrendingMovies() {
-    return remoteDataSource.getTrendingMovies();
+  Future<List<MovieModel>> getTrending(MediaCategory category) {
+    return remoteDataSource.getTrending(category);
   }
 
   @override
-  Future<List<MovieModel>> getPopularMovies({int page = 1}) {
-    return remoteDataSource.getPopularMovies(page: page);
+  Future<List<MovieModel>> getPopular(MediaCategory category, {int page = 1}) {
+    return remoteDataSource.getPopular(category, page: page);
   }
 
   @override
-  Future<List<MovieModel>> getTopRatedMovies({int page = 1}) {
-    return remoteDataSource.getTopRatedMovies(page: page);
+  Future<List<MovieModel>> getTopRated(MediaCategory category, {int page = 1}) {
+    return remoteDataSource.getTopRated(category, page: page);
   }
 
   @override
-  Future<List<MovieModel>> getUpcomingMovies({int page = 1}) {
-    return remoteDataSource.getUpcomingMovies(page: page);
+  Future<List<MovieModel>> getUpcoming(MediaCategory category, {int page = 1}) {
+    return remoteDataSource.getUpcoming(category, page: page);
   }
 
   @override
-  Future<List<MovieModel>> getNowPlaying({int page = 1}) {
-    return remoteDataSource.getNowPlaying(page: page);
+  Future<List<MovieModel>> getNowPlaying(MediaCategory category, {int page = 1}) {
+    return remoteDataSource.getNowPlaying(category, page: page);
   }
 
   @override
-  Future<List<MovieModel>> searchMovies(String query, {int page = 1}) {
-    return remoteDataSource.searchMovies(query, page: page);
+  Future<List<MovieModel>> search(String query, MediaCategory category, {int page = 1}) {
+    return remoteDataSource.search(query, category, page: page);
   }
 
   @override
-  Future<MovieModel> getMovieDetails(int movieId) {
-    return remoteDataSource.getMovieDetails(movieId);
+  Future<MovieModel> getDetails(int id, {required bool isTv}) {
+    return remoteDataSource.getDetails(id, isTv: isTv);
   }
 
   @override
-  Future<List<MovieModel>> getSimilarMovies(int movieId) {
-    return remoteDataSource.getSimilarMovies(movieId);
+  Future<List<MovieModel>> getSimilar(int id, {required bool isTv}) {
+    return remoteDataSource.getSimilar(id, isTv: isTv);
   }
 
   @override
-  Future<List<VideoModel>> getMovieVideos(int movieId) {
-    return remoteDataSource.getMovieVideos(movieId);
+  Future<List<VideoModel>> getVideos(int id, {required bool isTv}) {
+    return remoteDataSource.getVideos(id, isTv: isTv);
   }
 
   @override
-  Future<WatchProvidersResult> getWatchProviders(int movieId) {
-    return remoteDataSource.getWatchProviders(movieId);
+  Future<WatchProvidersResult> getWatchProviders(int id, {required bool isTv}) {
+    return remoteDataSource.getWatchProviders(id, isTv: isTv);
   }
 }

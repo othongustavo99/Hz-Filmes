@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/media_category.dart';
 import '../../../data/models/movie_model.dart';
 import '../../../domain/repositories/movie_repository.dart';
 
@@ -18,10 +19,12 @@ enum MovieListType {
 class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
   final MovieRepository movieRepository;
   final MovieListType type;
+  final MediaCategory category;
 
   MovieListBloc({
     required this.movieRepository,
     required this.type,
+    this.category = MediaCategory.movies,
   }) : super(MovieListInitial()) {
     on<LoadMovieList>(_onLoad);
     on<LoadMoreMovies>(_onLoadMore);
@@ -30,15 +33,15 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
   Future<List<MovieModel>> _fetch(int page) {
     switch (type) {
       case MovieListType.popular:
-        return movieRepository.getPopularMovies(page: page);
+        return movieRepository.getPopular(category, page: page);
       case MovieListType.topRated:
-        return movieRepository.getTopRatedMovies(page: page);
+        return movieRepository.getTopRated(category, page: page);
       case MovieListType.upcoming:
-        return movieRepository.getUpcomingMovies(page: page);
+        return movieRepository.getUpcoming(category, page: page);
       case MovieListType.nowPlaying:
-        return movieRepository.getNowPlaying(page: page);
+        return movieRepository.getNowPlaying(category, page: page);
       case MovieListType.trending:
-        return movieRepository.getTrendingMovies();
+        return movieRepository.getTrending(category);
     }
   }
 
@@ -69,8 +72,7 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     final currentState = state;
     if (currentState is! MovieListLoaded) return;
     if (currentState.hasReachedMax || currentState.isLoadingMore) return;
-    if (type == MovieListType.trending)
-      return; // trending não tem paginação fácil
+    if (type == MovieListType.trending) return;
 
     emit(currentState.copyWith(isLoadingMore: true));
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/core/constants/media_category.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 
@@ -12,11 +13,13 @@ import 'movie_detail_page.dart';
 class MovieListPage extends StatelessWidget {
   final String title;
   final MovieListType type;
+  final MediaCategory category;
 
   const MovieListPage({
     super.key,
     required this.title,
     required this.type,
+    this.category = MediaCategory.movies,
   });
 
   @override
@@ -25,16 +28,24 @@ class MovieListPage extends StatelessWidget {
       create: (context) => MovieListBloc(
         movieRepository: context.read<MovieRepository>(),
         type: type,
+        category: category,
       )..add(LoadMovieList()),
-      child: _MovieListView(title: title),
+      child: _MovieListView(
+        title: title,
+        isTv: category.isTv,
+      ),
     );
   }
 }
 
 class _MovieListView extends StatefulWidget {
   final String title;
+  final bool isTv;
 
-  const _MovieListView({required this.title});
+  const _MovieListView({
+    required this.title,
+    required this.isTv,
+  });
 
   @override
   State<_MovieListView> createState() => _MovieListViewState();
@@ -82,9 +93,17 @@ class _MovieListViewState extends State<_MovieListView> {
 
           if (state is MovieListError) {
             return Center(
-              child: Text(
-                'Erro: ${state.message}',
-                style: const TextStyle(color: Colors.red),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.message,
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             );
           }
@@ -99,23 +118,18 @@ class _MovieListViewState extends State<_MovieListView> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 12,
               ),
-              itemCount: state.hasReachedMax
-                  ? state.movies.length
-                  : state.movies.length + 1,
+              itemCount: state.movies.length + (state.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index >= state.movies.length) {
                   return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: CircularProgressIndicator(
-                        color: AppTheme.primaryOrange,
-                        strokeWidth: 2,
-                      ),
+                    child: CircularProgressIndicator(
+                      color: AppTheme.primaryOrange,
                     ),
                   );
                 }
 
                 final movie = state.movies[index];
+
                 return MovieCard(
                   movie: movie,
                   onTap: () {
@@ -123,14 +137,17 @@ class _MovieListViewState extends State<_MovieListView> {
                       movieId: movie.id,
                       genreIds: movie.genreIds,
                     );
-
                     ActivityRemoteDataSource().addClick(movie.id);
+
+                    final movieRepository = context.read<MovieRepository>();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MovieDetailPage(
                           movieId: movie.id,
-                          movieRepository: context.read<MovieRepository>(),
+                          movieRepository: movieRepository,
+                          isTv: widget.isTv,
                         ),
                       ),
                     );

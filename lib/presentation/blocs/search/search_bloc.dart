@@ -33,7 +33,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(SearchLoading());
 
     try {
-      final movies = await movieRepository.search(query, MediaCategory.movies, page: 1);
+      final movies = await movieRepository.search(
+        query,
+        event.category,
+        page: 1,
+      );
 
       if (movies.isEmpty) {
         emit(SearchEmpty(query));
@@ -42,11 +46,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           SearchLoaded(
             movies: movies,
             query: query,
+            category: event.category,
             currentPage: 1,
-            hasReachedMax: movies.length < 20, // TMDB retorna até 20 por página
+            hasReachedMax: movies.length < 20,
           ),
         );
       }
+
       await ActivityLocalDataSource().addSearch(query);
       ActivityRemoteDataSource().addSearch(query);
     } catch (e) {
@@ -59,6 +65,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     final currentState = state;
+
     if (currentState is! SearchLoaded) return;
     if (currentState.hasReachedMax || currentState.isLoadingMore) return;
 
@@ -66,9 +73,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final nextPage = currentState.currentPage + 1;
-      final newMovies = await movieRepository.search (
+
+      final newMovies = await movieRepository.search(
         currentState.query,
-        MediaCategory.movies,
+        currentState.category,
         page: nextPage,
       );
 
@@ -82,7 +90,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       } else {
         emit(
           currentState.copyWith(
-            movies: [...currentState.movies, ...newMovies],
+            movies: [
+              ...currentState.movies,
+              ...newMovies,
+            ],
             currentPage: nextPage,
             hasReachedMax: newMovies.length < 20,
             isLoadingMore: false,
@@ -90,11 +101,18 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         );
       }
     } catch (e) {
-      emit(currentState.copyWith(isLoadingMore: false));
+      emit(
+        currentState.copyWith(
+          isLoadingMore: false,
+        ),
+      );
     }
   }
 
-  void _onClearSearch(ClearSearch event, Emitter<SearchState> emit) {
+  void _onClearSearch(
+    ClearSearch event,
+    Emitter<SearchState> emit,
+  ) {
     emit(SearchInitial());
   }
 }

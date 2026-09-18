@@ -9,11 +9,15 @@ abstract class SearchEvent extends Equatable {
 
 class SearchMovies extends SearchEvent {
   final String query;
+  final MediaCategory category;
 
-  const SearchMovies(this.query);
+  const SearchMovies(
+    this.query, {
+    required this.category,
+  });
 
   @override
-  List<Object> get props => [query];
+  List<Object> get props => [query, category];
 }
 
 class LoadMoreSearchResults extends SearchEvent {}

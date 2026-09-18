@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hz_filmes/core/constants/media_category.dart';
 import 'package:hz_filmes/data/datasources/local/activity_local_datasource.dart';
 import 'package:hz_filmes/data/datasources/remote/activity_remote_datasource.dart';
 
@@ -35,22 +36,29 @@ class _SearchViewState extends State<_SearchView> {
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
 
+  MediaCategory _selectedCategory = MediaCategory.movies;
+
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<SearchBloc>().add(LoadMoreSearchResults());
+      context.read<SearchBloc>().add(
+        LoadMoreSearchResults(),
+      );
     }
   }
 
   bool get _isBottom {
     if (!_scrollController.hasClients) return false;
+
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
+
     return currentScroll >= (maxScroll * 0.9);
   }
 
@@ -59,32 +67,114 @@ class _SearchViewState extends State<_SearchView> {
     _controller.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
+
     super.dispose();
   }
 
   void _onSearch(String value) {
-    context.read<SearchBloc>().add(SearchMovies(value));
+    context.read<SearchBloc>().add(
+      SearchMovies(
+        value,
+        category: _selectedCategory,
+      ),
+    );
+  }
+
+  void _changeCategory(MediaCategory category) {
+    if (_selectedCategory == category) return;
+
+    setState(() {
+      _selectedCategory = category;
+    });
+
+    // Se já existe uma pesquisa, refaz automaticamente
+    // para a nova categoria.
+    if (_controller.text.trim().isNotEmpty) {
+      context.read<SearchBloc>().add(
+        SearchMovies(
+          _controller.text,
+          category: category,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundDark,
+
       appBar: AppBar(
         title: const Text('Buscar'),
         backgroundColor: AppTheme.backgroundDark,
       ),
+
       body: Column(
         children: [
+          // ==================== CATEGORIAS ====================
+          SizedBox(
+            height: 52,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              children: MediaCategory.values.map((category) {
+                final isSelected = _selectedCategory == category;
+
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: GestureDetector(
+                    onTap: () => _changeCategory(category),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceDark,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppTheme.primaryOrange
+                              : Colors.white24,
+                          width: isSelected ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Text(
+                        category.label,
+                        style: TextStyle(
+                          color: isSelected
+                              ? AppTheme.primaryOrange
+                              : Colors.white,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+
+          // ==================== CAMPO DE BUSCA ====================
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _controller,
               focusNode: _focusNode,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(
+                color: Colors.white,
+              ),
               decoration: InputDecoration(
-                hintText: 'Buscar filmes...',
-                hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                hintText: 'Buscar ${_selectedCategory.label.toLowerCase()}...',
+                hintStyle: const TextStyle(
+                  color: AppTheme.textSecondary,
+                ),
                 prefixIcon: const Icon(
                   Icons.search,
                   color: AppTheme.textSecondary,
@@ -97,7 +187,11 @@ class _SearchViewState extends State<_SearchView> {
                         ),
                         onPressed: () {
                           _controller.clear();
-                          context.read<SearchBloc>().add(ClearSearch());
+
+                          context.read<SearchBloc>().add(
+                            ClearSearch(),
+                          );
+
                           setState(() {});
                         },
                       )
@@ -110,10 +204,14 @@ class _SearchViewState extends State<_SearchView> {
                 ),
               ),
               textInputAction: TextInputAction.search,
-              onChanged: (value) => setState(() {}),
+              onChanged: (value) {
+                setState(() {});
+              },
               onSubmitted: _onSearch,
             ),
           ),
+
+          // ==================== RESULTADOS ====================
           Expanded(
             child: BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {
@@ -137,9 +235,9 @@ class _SearchViewState extends State<_SearchView> {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          const Text(
-                            'Buscar filmes',
-                            style: TextStyle(
+                          Text(
+                            'Buscar ${_selectedCategory.label.toLowerCase()}',
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -147,7 +245,7 @@ class _SearchViewState extends State<_SearchView> {
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Digite o nome de um filme\npara começar a buscar',
+                            'Digite um nome para começar a buscar',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: AppTheme.textSecondary,
@@ -173,7 +271,9 @@ class _SearchViewState extends State<_SearchView> {
                   return Center(
                     child: Text(
                       'Erro ao buscar: ${state.message}',
-                      style: const TextStyle(color: Colors.red),
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -209,10 +309,11 @@ class _SearchViewState extends State<_SearchView> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Tente outro nome ou verifique a escrita',
+                          Text(
+                            'Nenhum resultado encontrado em '
+                            '${_selectedCategory.label}.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 14,
                             ),
@@ -253,6 +354,7 @@ class _SearchViewState extends State<_SearchView> {
                       }
 
                       final movie = state.movies[index];
+
                       return MovieCard(
                         movie: movie,
                         onTap: () {
@@ -260,7 +362,9 @@ class _SearchViewState extends State<_SearchView> {
                             movieId: movie.id,
                             genreIds: movie.genreIds,
                           );
+
                           ActivityRemoteDataSource().addClick(movie.id);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -268,8 +372,7 @@ class _SearchViewState extends State<_SearchView> {
                                 movieId: movie.id,
                                 movieRepository: context
                                     .read<MovieRepository>(),
-                                    
-                                    
+                                isTv: state.category.isTv,
                               ),
                             ),
                           );

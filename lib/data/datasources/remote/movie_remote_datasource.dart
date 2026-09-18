@@ -227,6 +227,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
     final endpoint = category.isTv
         ? ApiConstants.searchTv
         : ApiConstants.searchMovie;
+
     final response = await dioClient.dio.get(
       endpoint,
       queryParameters: {
@@ -235,7 +236,44 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
         'include_adult': false,
       },
     );
-    return _parseMovieList(response);
+
+    final results = _parseMovieList(response);
+
+    // Filmes e séries normais não precisam
+    // de filtros adicionais.
+    if (category == MediaCategory.movies || category == MediaCategory.series) {
+      return results;
+    }
+
+    // ==================== ANIMES ====================
+    if (category == MediaCategory.animes) {
+      return results.where((movie) {
+        final isAnimation = movie.genreIds.contains(
+          ApiConstants.genreAnimation,
+        );
+
+        final isJapanese = movie.originalLanguage == 'ja';
+
+        return isAnimation && isJapanese;
+      }).toList();
+    }
+
+    // ==================== NOVELAS ====================
+    if (category == MediaCategory.novelas) {
+      return results.where((movie) {
+        final isPortuguese = movie.originalLanguage == 'pt';
+
+        final isSpanish = movie.originalLanguage == 'es';
+
+        final isSoap = movie.genreIds.contains(
+          ApiConstants.genreSoap,
+        );
+
+        return (isPortuguese || isSpanish) && isSoap;
+      }).toList();
+    }
+
+    return results;
   }
 
   // ---------- FILTRO POR GÊNERO ----------

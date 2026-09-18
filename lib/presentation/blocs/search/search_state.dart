@@ -14,6 +14,7 @@ class SearchLoading extends SearchState {}
 class SearchLoaded extends SearchState {
   final List<MovieModel> movies;
   final String query;
+  final MediaCategory category;
   final int currentPage;
   final bool hasReachedMax;
   final bool isLoadingMore;
@@ -21,6 +22,7 @@ class SearchLoaded extends SearchState {
   const SearchLoaded({
     required this.movies,
     required this.query,
+    required this.category,
     this.currentPage = 1,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
@@ -29,6 +31,7 @@ class SearchLoaded extends SearchState {
   SearchLoaded copyWith({
     List<MovieModel>? movies,
     String? query,
+    MediaCategory? category,
     int? currentPage,
     bool? hasReachedMax,
     bool? isLoadingMore,
@@ -36,6 +39,7 @@ class SearchLoaded extends SearchState {
     return SearchLoaded(
       movies: movies ?? this.movies,
       query: query ?? this.query,
+      category: category ?? this.category,
       currentPage: currentPage ?? this.currentPage,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
@@ -46,6 +50,7 @@ class SearchLoaded extends SearchState {
   List<Object?> get props => [
     movies,
     query,
+    category,
     currentPage,
     hasReachedMax,
     isLoadingMore,

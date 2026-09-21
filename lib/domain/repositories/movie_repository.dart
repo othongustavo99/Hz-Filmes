@@ -12,6 +12,9 @@ abstract class MovieRepository {
     MediaCategory category, {
     int page = 1,
   });
+  Future<List<MovieModel>> getBrazilianNovelas({int page = 1});
+  Future<List<MovieModel>> getNovelas2000s({int page = 1});
+  Future<List<MovieModel>> getNovelas90s({int page = 1});
   Future<List<MovieModel>> search(
     String query,
     MediaCategory category, {

@@ -16,6 +16,9 @@ abstract class MovieRemoteDataSource {
     MediaCategory category, {
     int page = 1,
   });
+  Future<List<MovieModel>> getBrazilianNovelas({int page = 1});
+  Future<List<MovieModel>> getNovelas2000s({int page = 1});
+  Future<List<MovieModel>> getNovelas90s({int page = 1});
   Future<List<MovieModel>> search(
     String query,
     MediaCategory category, {
@@ -174,21 +177,79 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
     MediaCategory category, {
     int page = 1,
   }) async {
+    final now = DateTime.now();
+
+    // Considera como "Em breve" conteúdos que serão lançados
+    // a partir de hoje, dentro dos próximos 6 meses.
+    final from = now.toIso8601String().substring(0, 10);
+
+    final to = DateTime(
+      now.year,
+      now.month + 6,
+      now.day,
+    ).toIso8601String().substring(0, 10);
+
     switch (category) {
+      // ==================== FILMES ====================
       case MediaCategory.movies:
         final response = await dioClient.dio.get(
           ApiConstants.upcomingMovies,
-          queryParameters: {'page': page},
+          queryParameters: {
+            'page': page,
+            'region': 'BR',
+          },
         );
+
         return _parseMovieList(response);
+
+      // ==================== SÉRIES ====================
       case MediaCategory.series:
-      case MediaCategory.animes:
-      case MediaCategory.novelas:
-        // Para TV usamos on_the_air como "em breve / no ar"
         final response = await dioClient.dio.get(
-          ApiConstants.onTheAir,
-          queryParameters: {'page': page},
+          ApiConstants.discoverTv,
+          queryParameters: {
+            'first_air_date.gte': from,
+            'first_air_date.lte': to,
+            'sort_by': 'first_air_date.asc',
+            'page': page,
+            'include_adult': false,
+          },
         );
+
+        return _parseMovieList(response);
+
+      // ==================== ANIMES ====================
+      case MediaCategory.animes:
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverTv,
+          queryParameters: {
+            'with_genres': ApiConstants.genreAnimation,
+            'with_original_language': 'ja',
+            'first_air_date.gte': from,
+            'first_air_date.lte': to,
+            'sort_by': 'first_air_date.asc',
+            'page': page,
+            'include_adult': false,
+          },
+        );
+
+        return _parseMovieList(response);
+
+      // ==================== NOVELAS ====================
+      case MediaCategory.novelas:
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverTv,
+          queryParameters: {
+            'with_genres':
+                '${ApiConstants.genreSoap}|${ApiConstants.genreDrama}',
+            'with_original_language': 'pt|es',
+            'first_air_date.gte': from,
+            'first_air_date.lte': to,
+            'sort_by': 'first_air_date.asc',
+            'page': page,
+            'include_adult': false,
+          },
+        );
+
         return _parseMovieList(response);
     }
   }
@@ -206,8 +267,28 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
           queryParameters: {'page': page},
         );
         return _parseMovieList(response);
+
       case MediaCategory.series:
+        final response = await dioClient.dio.get(
+          ApiConstants.airingToday,
+          queryParameters: {'page': page},
+        );
+        return _parseMovieList(response);
+
       case MediaCategory.animes:
+        final response = await dioClient.dio.get(
+          ApiConstants.discoverTv,
+          queryParameters: {
+            'with_genres': ApiConstants.genreAnimation,
+            'with_original_language': 'ja',
+            'sort_by': 'popularity.desc',
+            'vote_count.gte': 30,
+            'page': page,
+            'include_adult': false,
+          },
+        );
+        return _parseMovieList(response);
+
       case MediaCategory.novelas:
         final response = await dioClient.dio.get(
           ApiConstants.airingToday,
@@ -421,5 +502,58 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
       return WatchProvidersResult.fromJson(us);
     }
     return providers;
+  }
+
+  // ---------- NOVELAS BRASILEIRAS ----------
+  Future<List<MovieModel>> getBrazilianNovelas({int page = 1}) async {
+    final response = await dioClient.dio.get(
+      ApiConstants.discoverTv,
+      queryParameters: {
+        'with_genres': '${ApiConstants.genreSoap}|${ApiConstants.genreDrama}',
+        'with_original_language': 'pt',
+        'with_origin_country': 'BR',
+        'sort_by': 'popularity.desc',
+        'vote_count.gte': 30,
+        'page': page,
+        'include_adult': false,
+      },
+    );
+    return _parseMovieList(response);
+  }
+
+  // ---------- NOVELAS DOS ANOS 2000 ----------
+  Future<List<MovieModel>> getNovelas2000s({int page = 1}) async {
+    final response = await dioClient.dio.get(
+      ApiConstants.discoverTv,
+      queryParameters: {
+        'with_genres': '${ApiConstants.genreSoap}|${ApiConstants.genreDrama}',
+        'with_original_language': 'pt|es',
+        'first_air_date.gte': '2000-01-01',
+        'first_air_date.lte': '2009-12-31',
+        'sort_by': 'vote_average.desc',
+        'vote_count.gte': 20,
+        'page': page,
+        'include_adult': false,
+      },
+    );
+    return _parseMovieList(response);
+  }
+
+  // ---------- NOVELAS DOS ANOS 90 ----------
+  Future<List<MovieModel>> getNovelas90s({int page = 1}) async {
+    final response = await dioClient.dio.get(
+      ApiConstants.discoverTv,
+      queryParameters: {
+        'with_genres': '${ApiConstants.genreSoap}|${ApiConstants.genreDrama}',
+        'with_original_language': 'pt|es',
+        'first_air_date.gte': '1990-01-01',
+        'first_air_date.lte': '1999-12-31',
+        'sort_by': 'vote_average.desc',
+        'vote_count.gte': 15,
+        'page': page,
+        'include_adult': false,
+      },
+    );
+    return _parseMovieList(response);
   }
 }

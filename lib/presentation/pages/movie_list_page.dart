@@ -132,6 +132,8 @@ class _MovieListViewState extends State<_MovieListView> {
 
                 return MovieCard(
                   movie: movie,
+                  isTv: widget.isTv,
+                  movieRepository: context.read<MovieRepository>(),
                   onTap: () {
                     ActivityLocalDataSource().addClick(
                       movieId: movie.id,

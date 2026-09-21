@@ -79,4 +79,19 @@ class MovieRepositoryImpl implements MovieRepository {
       page: page,
     );
   }
+
+  @override
+  Future<List<MovieModel>> getBrazilianNovelas({int page = 1}) {
+    return remoteDataSource.getBrazilianNovelas(page: page);
+  }
+
+  @override
+  Future<List<MovieModel>> getNovelas2000s({int page = 1}) {
+    return remoteDataSource.getNovelas2000s(page: page);
+  }
+
+  @override
+  Future<List<MovieModel>> getNovelas90s({int page = 1}) {
+    return remoteDataSource.getNovelas90s(page: page);
+  }
 }

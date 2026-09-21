@@ -374,94 +374,136 @@ class _MovieDetailContent extends StatelessWidget {
                   ),
                 ),
 
-                // Onde assistir
-                const SizedBox(height: 28),
-                const Text(
-                  'Onde assistir',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
 
-                // Tem providers → mostra as plataformas
-                if (!watchProviders.isEmpty) ...[
-                  if (watchProviders.flatrate.isNotEmpty) ...[
-                    const Text(
-                      'Streaming',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _ProvidersRow(providers: watchProviders.flatrate),
-                    const SizedBox(height: 16),
-                  ],
-                  if (watchProviders.rent.isNotEmpty) ...[
-                    const Text(
-                      'Alugar',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _ProvidersRow(providers: watchProviders.rent),
-                    const SizedBox(height: 16),
-                  ],
-                  if (watchProviders.buy.isNotEmpty) ...[
-                    const Text(
-                      'Comprar',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _ProvidersRow(providers: watchProviders.buy),
-                  ],
-                ]
-                // Não tem providers → mostra "Apenas nos cinemas"
-                else ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardDark,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppTheme.primaryOrange.withOpacity(0.4),
-                        width: 1,
-                      ),
-                    ),
-                    child: const Row(
+                // Onde assistir
+                Builder(
+                  builder: (context) {
+                    final hasProviders = !watchProviders.isEmpty;
+
+                    // Heurística: filme lançado há pouco tempo e sem streaming → provavelmente só cinema
+                    bool isLikelyInTheaters = false;
+                    if (!isTv && !hasProviders) {
+                      final status = movie.status?.toLowerCase() ?? '';
+                      final isReleased = status == 'released';
+
+                      if (isReleased &&
+                          movie.releaseDate != null &&
+                          movie.releaseDate!.isNotEmpty) {
+                        try {
+                          final release = DateTime.parse(movie.releaseDate!);
+                          final daysSinceRelease = DateTime.now()
+                              .difference(release)
+                              .inDays;
+                          // Considera "em cartaz" se lançou há até 90 dias
+                          isLikelyInTheaters =
+                              daysSinceRelease >= 0 && daysSinceRelease <= 90;
+                        } catch (_) {}
+                      }
+                    }
+
+                    // Se não tem streaming E não está em cartaz → não mostra nada
+                    if (!hasProviders && !isLikelyInTheaters) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.local_movies_outlined,
-                          color: AppTheme.primaryOrange,
-                          size: 22,
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Disponível apenas nos cinemas',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        const SizedBox(height: 28),
+                        const Text(
+                          'Onde assistir',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
+                        const SizedBox(height: 12),
+
+                        // Tem providers → mostra as plataformas
+                        if (hasProviders) ...[
+                          if (watchProviders.flatrate.isNotEmpty) ...[
+                            const Text(
+                              'Streaming',
+                              style: TextStyle(
+                                color: AppTheme.textSecondary,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _ProvidersRow(providers: watchProviders.flatrate),
+                            const SizedBox(height: 16),
+                          ],
+                          if (watchProviders.rent.isNotEmpty) ...[
+                            const Text(
+                              'Alugar',
+                              style: TextStyle(
+                                color: AppTheme.textSecondary,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _ProvidersRow(providers: watchProviders.rent),
+                            const SizedBox(height: 16),
+                          ],
+                          if (watchProviders.buy.isNotEmpty) ...[
+                            const Text(
+                              'Comprar',
+                              style: TextStyle(
+                                color: AppTheme.textSecondary,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _ProvidersRow(providers: watchProviders.buy),
+                          ],
+                        ]
+                        // Só cinema
+                        else if (isLikelyInTheaters) ...[
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTheme.cardDark,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppTheme.primaryOrange.withOpacity(0.4),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(
+                                  Icons.local_movies_outlined,
+                                  color: AppTheme.primaryOrange,
+                                  size: 22,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Disponível apenas nos cinemas',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
-                    ),
-                  ),
-                ],
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
 
                 // Trailers
                 if (trailers.isNotEmpty) ...[
@@ -487,7 +529,7 @@ class _MovieDetailContent extends StatelessWidget {
                   ),
                 ],
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
 
                 // Elenco
                 if (movie.cast.isNotEmpty) ...[

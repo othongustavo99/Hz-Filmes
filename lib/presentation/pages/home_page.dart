@@ -156,7 +156,6 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // ==================== ABAS ====================
-                  // ==================== ABAS ====================
                   SliverToBoxAdapter(
                     child: SizedBox(
                       height: 52,
@@ -222,6 +221,7 @@ class _HomePageState extends State<HomePage> {
                           isTv: _selectedCategory.isTv,
                         ),
 
+                        // ==================== SEÇÕES COMUNS ====================
                         MovieSection(
                           title: 'Em Alta',
                           movies: state.trending,
@@ -283,8 +283,9 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
 
+                        // ==================== EM BREVE ====================
                         MovieSection(
-                          title: 'Em Breve',
+                          title: 'Em breve',
                           movies: state.upcoming,
                           isTv: _selectedCategory.isTv,
                           onSeeAll: () {
@@ -292,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => MovieListPage(
-                                  title: 'Em Breve',
+                                  title: 'Em breve',
                                   type: MovieListType.upcoming,
                                   category: _selectedCategory,
                                 ),
@@ -301,23 +302,78 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
 
-                        MovieSection(
-                          title: 'Em Cartaz',
-                          movies: state.nowPlaying,
-                          isTv: _selectedCategory.isTv,
-                          onSeeAll: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MovieListPage(
-                                  title: 'Em Cartaz',
-                                  type: MovieListType.nowPlaying,
-                                  category: _selectedCategory,
+                        // ==================== SEÇÕES ESPECÍFICAS DE NOVELAS ====================
+                        if (_selectedCategory == MediaCategory.novelas) ...[
+                          MovieSection(
+                            title: 'Novelas Brasileiras',
+                            movies: state.brazilianNovelas,
+                            isTv: true,
+                            onSeeAll: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MovieListPage(
+                                    title: 'Novelas Brasileiras',
+                                    type: MovieListType.brazilianNovelas,
+                                    category: MediaCategory.novelas,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            },
+                          ),
+                          MovieSection(
+                            title: '2000s',
+                            movies: state.novelas2000s,
+                            isTv: true,
+                            onSeeAll: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MovieListPage(
+                                    title: '2000s',
+                                    type: MovieListType.novelas2000s,
+                                    category: MediaCategory.novelas,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          MovieSection(
+                            title: '90s',
+                            movies: state.novelas90s,
+                            isTv: true,
+                            onSeeAll: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MovieListPage(
+                                    title: '90s',
+                                    type: MovieListType.novelas90s,
+                                    category: MediaCategory.novelas,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ] else ...[
+                          MovieSection(
+                            title: 'Em Cartaz',
+                            movies: state.nowPlaying,
+                            isTv: _selectedCategory.isTv,
+                            onSeeAll: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MovieListPage(
+                                    title: 'Em Cartaz',
+                                    type: MovieListType.nowPlaying,
+                                    category: _selectedCategory,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
 
                         const SizedBox(height: 40),
                       ],

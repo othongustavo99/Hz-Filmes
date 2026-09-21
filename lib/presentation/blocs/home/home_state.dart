@@ -19,6 +19,9 @@ class HomeLoaded extends HomeState {
   final List<MovieModel> upcoming;
   final List<MovieModel> nowPlaying;
   final List<MovieModel> recommended;
+  final List<MovieModel> brazilianNovelas;
+  final List<MovieModel> novelas2000s;
+  final List<MovieModel> novelas90s;
 
   const HomeLoaded({
     required this.category,
@@ -28,6 +31,9 @@ class HomeLoaded extends HomeState {
     required this.upcoming,
     required this.nowPlaying,
     this.recommended = const [],
+    this.brazilianNovelas = const [],
+    this.novelas2000s = const [],
+    this.novelas90s = const [],
   });
 
   @override
@@ -39,6 +45,9 @@ class HomeLoaded extends HomeState {
     upcoming,
     nowPlaying,
     recommended,
+    brazilianNovelas,
+    novelas2000s,
+    novelas90s,
   ];
 }
 

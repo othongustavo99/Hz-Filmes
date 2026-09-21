@@ -14,6 +14,9 @@ enum MovieListType {
   upcoming,
   nowPlaying,
   trending,
+  brazilianNovelas,
+  novelas2000s,
+  novelas90s,
 }
 
 class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
@@ -31,7 +34,6 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     on<LoadMovieList>(_onLoad);
     on<LoadMoreMovies>(_onLoadMore);
   }
-  
 
   Future<List<MovieModel>> _fetch(int page) {
     if (genreId != null) {
@@ -52,9 +54,14 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
         return movieRepository.getNowPlaying(category, page: page);
       case MovieListType.trending:
         return movieRepository.getTrending(category);
+      case MovieListType.brazilianNovelas:
+        return movieRepository.getBrazilianNovelas(page: page);
+      case MovieListType.novelas2000s:
+        return movieRepository.getNovelas2000s(page: page);
+      case MovieListType.novelas90s:
+        return movieRepository.getNovelas90s(page: page);
     }
   }
-  
 
   Future<void> _onLoad(
     LoadMovieList event,
